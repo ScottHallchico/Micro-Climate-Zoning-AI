@@ -1,0 +1,444 @@
+{
+  "records": {
+    "test-v1_base_20260510_204143": {
+      "artifact_id": "test-v1_base_20260510_204143",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "test-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:41:43.365421",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "v1_base_20260510_204143": {
+      "artifact_id": "v1_base_20260510_204143",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:41:43.560946",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_delhi_20260510_204143": {
+      "artifact_id": "ds-v1_delhi_20260510_204143",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:41:43.599786",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "test-v1_base_20260510_204231": {
+      "artifact_id": "test-v1_base_20260510_204231",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "test-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:42:31.775690",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "v1_base_20260510_204231": {
+      "artifact_id": "v1_base_20260510_204231",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:42:31.849882",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_delhi_20260510_204231": {
+      "artifact_id": "ds-v1_delhi_20260510_204231",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:42:31.888443",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "test-v1_base_20260510_205046": {
+      "artifact_id": "test-v1_base_20260510_205046",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "test-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:50:46.083009",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "v1_base_20260510_205046": {
+      "artifact_id": "v1_base_20260510_205046",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:50:46.155246",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_delhi_20260510_205046": {
+      "artifact_id": "ds-v1_delhi_20260510_205046",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:50:46.195377",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "test-v1_base_20260510_205430": {
+      "artifact_id": "test-v1_base_20260510_205430",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "test-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:54:30.767124",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "v1_base_20260510_205430": {
+      "artifact_id": "v1_base_20260510_205430",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:54:30.838641",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_delhi_20260510_205430": {
+      "artifact_id": "ds-v1_delhi_20260510_205430",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:54:30.882792",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_S0_20260510_205431": {
+      "artifact_id": "ds-v1_S0_20260510_205431",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:54:31.913154",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "test-v1_base_20260510_205719": {
+      "artifact_id": "test-v1_base_20260510_205719",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "test-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:57:19.114914",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "v1_base_20260510_205719": {
+      "artifact_id": "v1_base_20260510_205719",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:57:19.190170",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_delhi_20260510_205719": {
+      "artifact_id": "ds-v1_delhi_20260510_205719",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:57:19.242659",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_S0_20260510_205720": {
+      "artifact_id": "ds-v1_S0_20260510_205720",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:57:20.508157",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "test-v1_base_20260510_205821": {
+      "artifact_id": "test-v1_base_20260510_205821",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "test-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:58:21.609127",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "v1_base_20260510_205821": {
+      "artifact_id": "v1_base_20260510_205821",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:58:21.728674",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_delhi_20260510_205821": {
+      "artifact_id": "ds-v1_delhi_20260510_205821",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:58:21.822278",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_S0_20260510_205824": {
+      "artifact_id": "ds-v1_S0_20260510_205824",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:58:24.847313",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_S0_20260510_205825": {
+      "artifact_id": "ds-v1_S0_20260510_205825",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-10T20:58:25.165673",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    }
+  }
+}

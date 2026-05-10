@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Micro-Climate Zoning AI — Interactive scenario dashboard for city planners to explore physics-grounded zoning configurations">
+    <title>MicroClimate Zoning AI — Scenario Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Top Navigation Bar -->
+        <nav id="top-nav" class="top-nav">
+            <div class="nav-brand">
+                <div class="brand-icon">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                        <circle cx="14" cy="14" r="12" stroke="url(#grad1)" stroke-width="2.5" fill="none" />
+                        <path d="M8 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="url(#grad1)" stroke-width="2" fill="none"
+                            stroke-linecap="round" />
+                        <circle cx="14" cy="14" r="3" fill="url(#grad1)" />
+                        <defs>
+                            <linearGradient id="grad1" x1="0" y1="0" x2="28" y2="28">
+                                <stop stop-color="#06b6d4" />
+                                <stop offset="1" stop-color="#8b5cf6" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="brand-text">MicroClimate AI</span>
+                <span class="brand-badge">Scenario Dashboard</span>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-btn" id="btn-refresh" title="Refresh Data">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M13.65 2.35A8 8 0 1014 8h-2a6 6 0 11-1.76-4.24L8 6h6V0l-2.35 2.35z" />
+                    </svg>
+                </button>
+                <div class="nav-status">
+                    <span class="status-dot"></span>
+                    <span id="connection-status">Connected</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="main-layout">
+            <!-- Left Sidebar: Controls & Pareto Front -->
+            <aside id="sidebar" class="sidebar">
+                <!-- Block Override Controls -->
+                <section class="panel" id="override-panel">
+                    <h2 class="panel-title">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path
+                                d="M12.146.146a.5.5 0 01.708 0l3 3a.5.5 0 010 .708l-10 10a.5.5 0 01-.168.11l-5 2a.5.5 0 01-.65-.65l2-5a.5.5 0 01.11-.168l10-10z" />
+                        </svg>
+                        Block Override
+                    </h2>
+                    <div class="form-group">
+                        <label for="override-block-select">Select Block</label>
+                        <select id="override-block-select" class="form-control">
+                            <option value="">— Choose a block —</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="override-height">Height (m)</label>
+                        <input type="range" id="override-height" min="3" max="100" value="20" class="form-range">
+                        <span class="range-value" id="height-value">20m</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="override-albedo">Roof Albedo</label>
+                        <input type="range" id="override-albedo" min="0" max="100" value="30" class="form-range">
+                        <span class="range-value" id="albedo-value">0.30</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="override-green">Green Cover (%)</label>
+                        <input type="range" id="override-green" min="0" max="100" value="15" class="form-range">
+                        <span class="range-value" id="green-value">15%</span>
+                    </div>
+                    <button id="btn-apply-override" class="btn btn-primary">
+                        Apply Override
+                    </button>
+                    <div id="override-warning" class="warning-box" style="display:none;">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path
+                                d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a1 1 0 011 1v4a1 1 0 01-2 0V4a1 1 0 011-1zm0 8a1 1 0 100-2 1 1 0 000 2z" />
+                        </svg>
+                        <span id="warning-text"></span>
+                    </div>
+                </section>
+
+                <!-- Pareto Front Selector -->
+                <section class="panel" id="pareto-panel">
+                    <h2 class="panel-title">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M0 0h4v4H0V0zm6 0h4v4H6V0zm6 0h4v4h-4V0zM0 6h4v4H0V6zm6 6h4v4H6v-4z" />
+                        </svg>
+                        Pareto Configurations
+                    </h2>
+                    <div class="pareto-stats">
+                        <div class="stat">
+                            <span class="stat-value" id="pareto-count">0</span>
+                            <span class="stat-label">Configurations</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="best-uhi">—</span>
+                            <span class="stat-label">Best UHI (°C)</span>
+                        </div>
+                    </div>
+                    <div id="pareto-list" class="pareto-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+            </aside>
+
+            <!-- Center: Map View -->
+            <main id="map-container" class="map-container">
+                <div id="city-map" class="city-map">
+                    <!-- SVG Map will be rendered here -->
+                </div>
+                <div class="map-legend">
+                    <h3>Zone Classes</h3>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #ef4444;"></span>
+                            <span>Wind Corridor Critical</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #f59e0b;"></span>
+                            <span>Thermal Remediation</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #10b981;"></span>
+                            <span>Density Adaptive</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #6b7280;"></span>
+                            <span>Baseline Unchanged</span>
+                        </div>
+                    </div>
+                    <h3>UHI Intensity</h3>
+                    <div class="legend-gradient">
+                        <div class="gradient-bar"></div>
+                        <div class="gradient-labels">
+                            <span>0°C</span>
+                            <span>+5°C</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Right Sidebar: Block Details & Community Heat Index -->
+            <aside id="right-sidebar" class="sidebar right-sidebar">
+                <!-- Block Details -->
+                <section class="panel" id="block-details-panel">
+                    <h2 class="panel-title">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 0a8 8 0 100 16A8 8 0 008 0zm1 12H7V7h2v5zm0-7H7V3h2v2z" />
+                        </svg>
+                        Block Details
+                    </h2>
+                    <div id="block-details" class="block-details">
+                        <p class="placeholder-text">Select a block on the map to view details</p>
+                    </div>
+                </section>
+
+                <!-- Community Heat Index -->
+                <section class="panel" id="heat-index-panel">
+                    <h2 class="panel-title">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 0a3 3 0 00-3 3v5.268a4 4 0 106 0V3a3 3 0 00-3-3z" />
+                        </svg>
+                        Community Heat Index
+                    </h2>
+                    <div id="ward-heat-index" class="ward-heat-index">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <!-- PINN Prediction Result -->
+                <section class="panel" id="prediction-panel">
+                    <h2 class="panel-title">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M2 2v12h12V2H2zm2 2h8v8H4V4z" />
+                        </svg>
+                        PINN Prediction
+                    </h2>
+                    <div id="prediction-result" class="prediction-result">
+                        <p class="placeholder-text">Apply an override to see PINN-predicted thermal consequences</p>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>
