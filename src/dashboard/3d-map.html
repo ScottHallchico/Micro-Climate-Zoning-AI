@@ -65,6 +65,34 @@
                 </section>
 
                 <section class="panel">
+                    <h2 class="panel-title">3D Edit Controls</h2>
+                    <div class="editor-form">
+                        <label class="editor-field">
+                            <span class="editor-label">Block</span>
+                            <select id="edit-block-select" class="editor-input">
+                                <option value="">Select a block</option>
+                            </select>
+                        </label>
+                        <label class="editor-field">
+                            <span class="editor-label">Height</span>
+                            <input id="edit-height" class="editor-range" type="range" min="6" max="80" step="1" value="24">
+                            <span id="edit-height-value" class="editor-value">24m</span>
+                        </label>
+                        <label class="editor-field">
+                            <span class="editor-label">Green Cover</span>
+                            <input id="edit-green-cover" class="editor-range" type="range" min="0" max="100" step="1" value="20">
+                            <span id="edit-green-cover-value" class="editor-value">20%</span>
+                        </label>
+                        <label class="editor-field">
+                            <span class="editor-label">Roof Albedo</span>
+                            <input id="edit-albedo" class="editor-range" type="range" min="0.10" max="0.90" step="0.01" value="0.28">
+                            <span id="edit-albedo-value" class="editor-value">0.28</span>
+                        </label>
+                        <button id="btn-apply-3d-edits" class="editor-button" type="button">Apply To 3D Block</button>
+                    </div>
+                </section>
+
+                <section class="panel">
                     <h2 class="panel-title">Zone Classes</h2>
                     <div class="legend-items">
                         <div class="legend-item"><span class="legend-color wind"></span>Wind Corridor Critical</div>

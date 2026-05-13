@@ -72,12 +72,32 @@ function loadBlocksFromSharedState() {
     try {
         const saved = JSON.parse(localStorage.getItem(SHARED_BLOCK_STATE_KEY) || 'null');
         if (Array.isArray(saved) && saved.length > 0) {
-            return saved;
+            return saved.map((block, index) => normalizeDashboardBlock(block, index));
         }
     } catch (error) {
         console.warn('Unable to load shared dashboard state:', error);
     }
     return null;
+}
+
+function normalizeDashboardBlock(block, index) {
+    const col = Number.isFinite(block.col) ? block.col : index % 5;
+    const row = Number.isFinite(block.row) ? block.row : Math.floor(index / 5);
+    return {
+        ...block,
+        id: block.id || `BLK-${String(index + 1).padStart(2, '0')}`,
+        col,
+        row,
+        zone_class: block.zone_class || 'BASELINE_UNCHANGED',
+        max_height_m: Number(block.max_height_m ?? 12),
+        uhi_intensity: Number(block.uhi_intensity ?? 0),
+        svf: Number(block.svf ?? 0.5).toFixed(2),
+        lambda_p: Number(block.lambda_p ?? 0.3).toFixed(2),
+        hw_ratio: Number(block.hw_ratio ?? 1.0).toFixed(1),
+        albedo: Number(block.albedo ?? 0.24).toFixed(2),
+        green_cover: Number(block.green_cover ?? block.green_cover_pct ?? 12),
+        interventions: Array.isArray(block.interventions) ? block.interventions : [],
+    };
 }
 
 function generateInterventions(zoneClass) {
@@ -158,7 +178,9 @@ async function loadActualBlocks() {
     const response = await fetch('http://127.0.0.1:8000/v1/data/actual?mode=design_peak');
     if (!response.ok) throw new Error(`Actual data API returned ${response.status}`);
     const payload = await response.json();
-    state.blocks = payload.blocks;
+    state.blocks = Array.isArray(payload.blocks)
+        ? payload.blocks.map((block, index) => normalizeDashboardBlock(block, index))
+        : [];
     state.actualWeather = payload.weather;
     state.paretoConfigs = generateParetoConfigs(state.blocks);
     state.wards = generateWards(state.blocks);
@@ -171,7 +193,15 @@ async function initializeBlocks() {
         state.wards = generateWards(state.blocks);
         return;
     }
-    await loadActualBlocks();
+    try {
+        await loadActualBlocks();
+    } catch (error) {
+        console.warn('Actual data API unavailable, using generated fallback blocks:', error);
+        state.blocks = generateBlocks().map((block, index) => normalizeDashboardBlock(block, index));
+        state.paretoConfigs = generateParetoConfigs(state.blocks);
+        state.wards = generateWards(state.blocks);
+        saveBlocksToSharedState();
+    }
 }
 
 // ============================================================
@@ -538,6 +568,7 @@ function hideWarning() {
 
 function populateBlockSelect() {
     const select = document.getElementById('override-block-select');
+    select.innerHTML = '<option value="">Select a block</option>';
     state.blocks.forEach(block => {
         const opt = document.createElement('option');
         opt.value = block.id;
@@ -615,7 +646,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         await initializeBlocks();
     } catch (error) {
         console.warn('Actual data API unavailable, using previous local state:', error);
-        if (!state.blocks.length) state.blocks = [];
+        if (!state.blocks.length) {
+            state.blocks = generateBlocks().map((block, index) => normalizeDashboardBlock(block, index));
+        }
         saveBlocksToSharedState();
     }
     populateBlockSelect();

@@ -5,11 +5,11 @@ Endpoints:
   GET  /v1/directive/{id}/provenance — Full provenance record
   GET  /v1/health — Health check
 """
-
 from __future__ import annotations
 
 import csv
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -21,7 +21,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 
 from src.shared.types import ComplianceResponse, ZoningDirective
-from src.shared.config import PINNConfig
+from src.shared.config import Config, PINNConfig
+from src.shared.exceptions import CheckpointError
 from src.provenance.store import ProvenanceStore
 from src.zoning.generator import ZoningGenerator
 from src.cfd.runner import CFDRunner
@@ -37,7 +38,12 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=[
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,9 +56,13 @@ _audit_log: list[dict[str, Any]] = []
 _provenance_store = ProvenanceStore()
 _cfd_runner = CFDRunner(provenance_store=_provenance_store)
 _pinn_model: PINNModel | None = None
+_pinn_model_source = "uninitialized"
+_pinn_model_version = ""
+APP_CONFIG = Config.from_env()
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 ACTUAL_WEATHER_PATH = DATA_DIR / "actual_weather_measurements.csv"
 ACTUAL_BLOCKS_PATH = DATA_DIR / "actual_blocks.csv"
+CHECKPOINT_DIR = (Path(__file__).resolve().parents[2] / APP_CONFIG.checkpoint_dir).resolve()
 
 PINN_FEATURE_NAMES = [
     "svf",
@@ -164,6 +174,8 @@ class PINNPredictionResponse(BaseModel):
     """PINN prediction response for the 3D dashboard."""
     simulation_type: str
     model: str
+    model_source: str
+    model_version: str | None = None
     generated_at: str
     block_count: int
     results: list[dict[str, Any]]
@@ -315,7 +327,7 @@ def _build_actual_blocks(weather: dict[str, Any]) -> list[dict[str, Any]]:
 
 def _get_demo_pinn_model() -> PINNModel:
     """Lazy-load a lightweight PINN instance for untrained dashboard inference."""
-    global _pinn_model
+    global _pinn_model, _pinn_model_source, _pinn_model_version
     if _pinn_model is None:
         config = PINNConfig(encoder_layers=2, encoder_width=64, max_epochs=5)
         model = PINNModel(input_dim=10, config=config, provenance_store=_provenance_store)
@@ -331,6 +343,73 @@ def _get_demo_pinn_model() -> PINNModel:
         model._training_dataset_version = "untrained-pinn-actual-inputs-v1"
         model.eval()
         _pinn_model = model
+        _pinn_model_source = "fallback_demo"
+        _pinn_model_version = model._training_dataset_version
+    return _pinn_model
+
+
+def _candidate_checkpoint_paths() -> list[Path]:
+    explicit_path_str = os.getenv("PINN_CHECKPOINT_PATH")
+    explicit_path = Path(explicit_path_str).expanduser() if explicit_path_str else None
+    candidates: list[Path] = []
+    if explicit_path:
+        if not explicit_path.is_absolute():
+            explicit_path = (Path(__file__).resolve().parents[2] / explicit_path).resolve()
+        candidates.append(explicit_path)
+    if CHECKPOINT_DIR.exists():
+        candidates.extend(sorted(CHECKPOINT_DIR.glob("*.pt"), key=lambda path: path.stat().st_mtime, reverse=True))
+        candidates.extend(sorted(CHECKPOINT_DIR.glob("*.pth"), key=lambda path: path.stat().st_mtime, reverse=True))
+
+    # Deduplicate while preserving order.
+    seen: set[Path] = set()
+    ordered: list[Path] = []
+    for path in candidates:
+        resolved = path.resolve()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        ordered.append(resolved)
+    return ordered
+
+
+def _load_real_pinn_model() -> PINNModel | None:
+    global _pinn_model_source, _pinn_model_version
+    for checkpoint_path in _candidate_checkpoint_paths():
+        if not checkpoint_path.exists():
+            continue
+        try:
+            checkpoint_data = torch.load(str(checkpoint_path), map_location="cpu", weights_only=False)
+            manifest = checkpoint_data.get("manifest", {})
+            arch_config = manifest.get("architecture_config", {})
+            checkpoint_config = PINNConfig(
+                encoder_layers=int(arch_config.get("encoder_layers", PINNConfig().encoder_layers)),
+                encoder_width=int(arch_config.get("encoder_width", PINNConfig().encoder_width)),
+                activation=str(arch_config.get("activation", PINNConfig().activation)),
+                wind_head_outputs=int(arch_config.get("wind_head_outputs", PINNConfig().wind_head_outputs)),
+                energy_head_outputs=int(arch_config.get("energy_head_outputs", PINNConfig().energy_head_outputs)),
+            )
+            model = PINNModel.load_checkpoint(
+                checkpoint_path,
+                config=checkpoint_config,
+                provenance_store=_provenance_store,
+            )
+            model.eval()
+            _pinn_model_source = "trained_checkpoint"
+            _pinn_model_version = model._training_dataset_version or checkpoint_path.name
+            logger.info("Loaded trained PINN checkpoint from %s", checkpoint_path)
+            return model
+        except CheckpointError as error:
+            logger.warning("Skipping unusable PINN checkpoint %s: %s", checkpoint_path, error)
+        except Exception as error:  # pragma: no cover - defensive logging path
+            logger.warning("Unexpected error loading PINN checkpoint %s: %s", checkpoint_path, error)
+    return None
+
+
+def _get_active_pinn_model() -> PINNModel:
+    global _pinn_model
+    if _pinn_model is not None:
+        return _pinn_model
+    _pinn_model = _load_real_pinn_model() or _get_demo_pinn_model()
     return _pinn_model
 
 
@@ -552,7 +631,7 @@ async def predict_with_pinn(request: PINNPredictionRequest) -> PINNPredictionRes
     It is intended to prove the API/UI integration path now; trained CFD or
     field-measurement data can replace the demo weights later.
     """
-    model = _get_demo_pinn_model()
+    model = _get_active_pinn_model()
     results: list[dict[str, Any]] = []
     for block in request.blocks:
         features = _block_to_pinn_features(block)
@@ -568,7 +647,9 @@ async def predict_with_pinn(request: PINNPredictionRequest) -> PINNPredictionRes
         )
     return PINNPredictionResponse(
         simulation_type="pinn_surrogate",
-        model="untrained_pinn_actual_inputs_v1",
+        model="trained_pinn_checkpoint_v1" if _pinn_model_source == "trained_checkpoint" else "untrained_pinn_actual_inputs_v1",
+        model_source=_pinn_model_source,
+        model_version=_pinn_model_version or None,
         generated_at=datetime.utcnow().isoformat(),
         block_count=len(results),
         results=results,

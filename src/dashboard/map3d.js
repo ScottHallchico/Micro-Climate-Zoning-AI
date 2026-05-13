@@ -57,9 +57,12 @@ const thermalMeshes = [];
 const thermalLabels = [];
 const pinnMeshes = [];
 const pinnLabels = [];
+const blockGroups = [];
+const blockLabels = [];
 let selectedMesh = null;
 let selectedBlockGroup = null;
 let selectedHighlight = null;
+let selectedBlockId = null;
 
 setupLights();
 createGround();
@@ -74,6 +77,7 @@ document.getElementById("btn-reset-camera").addEventListener("click", () => {
 
 window.addEventListener("resize", resize);
 canvas.addEventListener("click", onCanvasClick);
+setupEditorControls();
 
 function generateBlocks(count = 20) {
     const generated = [];
@@ -158,7 +162,10 @@ async function initScene() {
         }
     } catch (error) {
         console.warn("Actual data API unavailable for 3D map:", error);
-        if (!blocks.length) blocks = [];
+        if (!blocks.length) {
+            blocks = generateBlocks().map((block, index) => normalizeSharedBlock(block, index));
+            localStorage.setItem(SHARED_BLOCK_STATE_KEY, JSON.stringify(blocks));
+        }
     }
     createBlocks();
     resize();
@@ -327,6 +334,10 @@ function updateHud(message) {
         badge.classList.remove("loading", "active", "fallback");
         badge.classList.add(usingBackend ? "active" : "fallback");
     }
+}
+
+function saveBlocksToSharedState() {
+    localStorage.setItem(SHARED_BLOCK_STATE_KEY, JSON.stringify(blocks));
 }
 
 function setupLights() {
@@ -790,6 +801,7 @@ function createBlocks() {
         group.userData.block = block;
         group.position.set(baseX, 0, baseZ);
         scene.add(group);
+        blockGroups.push(group);
 
         createParcel(group, block);
         createBlockHitArea(group, block);
@@ -810,7 +822,123 @@ function createBlocks() {
         const label = makeLabel(block.id);
         label.position.set(baseX, tallest + 1.1, baseZ);
         scene.add(label);
+        blockLabels.push(label);
     });
+
+    populateBlockEditor();
+}
+
+function clearBlockScene() {
+    blockGroups.forEach((group) => scene.remove(group));
+    blockLabels.forEach((label) => scene.remove(label));
+    blockGroups.length = 0;
+    blockLabels.length = 0;
+    blockMeshes.length = 0;
+    animatedPlumes.length = 0;
+    sunlightMeshes.length = 0;
+    shadowMeshes.length = 0;
+    sunBeamMeshes.length = 0;
+    windFlowMeshes.length = 0;
+    thermalMeshes.length = 0;
+    thermalLabels.length = 0;
+    pinnMeshes.length = 0;
+    pinnLabels.length = 0;
+    selectedMesh = null;
+    selectedBlockGroup = null;
+    if (selectedHighlight) {
+        selectedHighlight.parent?.remove(selectedHighlight);
+        selectedHighlight.geometry.dispose();
+        selectedHighlight.material.dispose();
+        selectedHighlight = null;
+    }
+}
+
+function rebuildBlockScene() {
+    clearBlockScene();
+    createBlocks();
+    if (selectedBlockId) {
+        selectBlockById(selectedBlockId);
+    }
+}
+
+function populateBlockEditor() {
+    const select = document.getElementById("edit-block-select");
+    if (!select) return;
+    select.innerHTML = '<option value="">Select a block</option>';
+    blocks.forEach((block) => {
+        const option = document.createElement("option");
+        option.value = block.id;
+        option.textContent = `${block.id} - ${ZONE_LABELS[block.zone_class]}`;
+        select.appendChild(option);
+    });
+    if (selectedBlockId) {
+        select.value = selectedBlockId;
+    }
+}
+
+function syncEditorControls(block) {
+    const select = document.getElementById("edit-block-select");
+    const height = document.getElementById("edit-height");
+    const green = document.getElementById("edit-green-cover");
+    const albedo = document.getElementById("edit-albedo");
+    if (!select || !height || !green || !albedo) return;
+    select.value = block.id;
+    height.value = Math.round(block.max_height_m);
+    green.value = Math.round(block.green_cover);
+    albedo.value = Number(block.albedo).toFixed(2);
+    updateEditorValueLabels();
+}
+
+function updateEditorValueLabels() {
+    const height = document.getElementById("edit-height");
+    const green = document.getElementById("edit-green-cover");
+    const albedo = document.getElementById("edit-albedo");
+    const heightValue = document.getElementById("edit-height-value");
+    const greenValue = document.getElementById("edit-green-cover-value");
+    const albedoValue = document.getElementById("edit-albedo-value");
+    if (height && heightValue) heightValue.textContent = `${height.value}m`;
+    if (green && greenValue) greenValue.textContent = `${green.value}%`;
+    if (albedo && albedoValue) albedoValue.textContent = Number(albedo.value).toFixed(2);
+}
+
+function setupEditorControls() {
+    ["edit-height", "edit-green-cover", "edit-albedo"].forEach((id) => {
+        document.getElementById(id)?.addEventListener("input", updateEditorValueLabels);
+    });
+    document.getElementById("edit-block-select")?.addEventListener("change", (event) => {
+        if (!event.target.value) return;
+        selectBlockById(event.target.value);
+    });
+    document.getElementById("btn-apply-3d-edits")?.addEventListener("click", apply3DEdits);
+}
+
+function apply3DEdits() {
+    const blockId = document.getElementById("edit-block-select")?.value;
+    if (!blockId) return;
+    const block = blocks.find((item) => item.id === blockId);
+    if (!block) return;
+
+    const newHeight = Number(document.getElementById("edit-height").value);
+    const newGreen = Number(document.getElementById("edit-green-cover").value);
+    const newAlbedo = Number(document.getElementById("edit-albedo").value);
+
+    const heightDelta = newHeight - Number(block.max_height_m);
+    const greenDelta = newGreen - Number(block.green_cover);
+    const albedoDelta = newAlbedo - Number(block.albedo);
+    const uhiShift = heightDelta * 0.028 - greenDelta * 0.018 - albedoDelta * 1.9;
+
+    block.max_height_m = newHeight;
+    block.green_cover = newGreen;
+    block.albedo = Number(newAlbedo.toFixed(2));
+    block.uhi_intensity = Math.max(0, Number((block.uhi_intensity + uhiShift).toFixed(2)));
+    block.surface_temp_c = Number(((block.surface_temp_c || 36) + uhiShift * 0.85).toFixed(1));
+    block.air_temp_c = Number(((block.air_temp_c || 33) + uhiShift * 0.45).toFixed(1));
+    block.heat_storage_wm2 = Math.max(80, Number(((block.heat_storage_wm2 || 160) + heightDelta * 2.8 - greenDelta * 0.9).toFixed(0)));
+
+    selectedBlockId = block.id;
+    saveBlocksToSharedState();
+    rebuildBlockScene();
+    loadCFDMicroclimate();
 }
 
 function createBlockHitArea(group, block) {
@@ -855,33 +983,27 @@ function createParcel(group, block) {
 
 function createBuildingCluster(group, block) {
     const heat = heatColor(block.uhi_intensity);
-    const buildingCount = block.lambda_p > 0.45 ? 4 : block.lambda_p > 0.3 ? 3 : 2;
-    const positions = [
-        [-1.85, -1.55],
-        [1.6, -1.35],
-        [-1.25, 1.65],
-        [1.75, 1.55],
-    ];
+    const massing = buildingMassingForBlock(block);
     let tallest = 0;
 
-    for (let i = 0; i < buildingCount; i++) {
-        const scale = 0.58 + ((block.max_height_m + i * 7) % 18) / 42;
-        const h = Math.max(1.2, block.max_height_m * 0.15 * scale);
+    for (let i = 0; i < massing.length; i++) {
+        const spec = massing[i];
+        const h = spec.height;
         tallest = Math.max(tallest, h);
-        const w = 1.55 + ((block.green_cover + i * 5) % 14) / 12;
-        const d = 1.45 + ((block.max_height_m + i * 3) % 12) / 13;
+        const w = spec.width;
+        const d = spec.depth;
 
         const body = new THREE.Mesh(
             new THREE.BoxGeometry(w, h, d),
             new THREE.MeshStandardMaterial({
-                color: heat.clone().lerp(new THREE.Color(0xdbeafe), 0.16),
+                color: heat.clone().lerp(new THREE.Color(spec.colorTint), 0.18),
                 emissive: heat,
                 emissiveIntensity: block.uhi_intensity > 3.8 ? 0.09 : 0.025,
-                roughness: 0.64,
-                metalness: 0.04,
+                roughness: spec.roughness,
+                metalness: spec.metalness,
             }),
         );
-        body.position.set(positions[i][0], h / 2 + 0.14, positions[i][1]);
+        body.position.set(spec.x, h / 2 + 0.14, spec.z);
         body.castShadow = true;
         body.receiveShadow = true;
         body.userData.block = block;
@@ -892,9 +1014,187 @@ function createBuildingCluster(group, block) {
         addFacadeLines(group, body, w, h, d);
         createFacadeDetails(group, body, w, h, d, block, i);
         addRoofTreatment(group, block, body, w, d);
+
+        if (spec.setbackHeight > 0) {
+            createTowerSetback(group, block, body, spec, heat, i);
+        }
     }
 
     return tallest + 0.16;
+}
+
+function buildingMassingForBlock(block) {
+    const planArea = Number(block.lambda_p || 0.3);
+    const blockHeight = Math.max(7, Number(block.max_height_m || 12));
+    const osmCount = Math.max(0, Number(block.osm_building_count || 0));
+    const densityBias = Math.min(1, planArea * 1.35 + osmCount / 28);
+    const compactness = Math.min(1, Math.max(0, Number(block.hw_ratio || 1.1) / 2.3));
+    const towerHeight = Math.max(2.4, blockHeight * 0.3);
+
+    if (densityBias > 0.82) {
+        return [
+            {
+                x: -0.15,
+                z: 0.1,
+                width: 4.9,
+                depth: 3.9,
+                height: Math.max(2.1, towerHeight * 0.36),
+                setbackHeight: Math.max(4.6, towerHeight * 1.08),
+                setbackWidth: 1.95,
+                setbackDepth: 1.8,
+                setbackOffsetX: -0.25,
+                setbackOffsetZ: 0.05,
+                colorTint: 0xe5e7eb,
+                roughness: 0.5,
+                metalness: 0.12,
+            },
+            {
+                x: 2.2,
+                z: -2.1,
+                width: 1.1,
+                depth: 1.55,
+                height: Math.max(2.1, towerHeight * 0.34),
+                setbackHeight: Math.max(2.8, towerHeight * 0.56),
+                setbackWidth: 0.82,
+                setbackDepth: 0.9,
+                setbackOffsetX: -0.04,
+                setbackOffsetZ: 0.02,
+                colorTint: 0xcbd5e1,
+                roughness: 0.56,
+                metalness: 0.1,
+            },
+        ];
+    }
+
+    if (densityBias > 0.56) {
+        return [
+            {
+                x: -1.65,
+                z: -0.15,
+                width: 2.35,
+                depth: 4.5,
+                height: Math.max(2.0, towerHeight * (0.44 + compactness * 0.16)),
+                setbackHeight: Math.max(2.8, towerHeight * 0.76),
+                setbackWidth: 1.28,
+                setbackDepth: 2.05,
+                setbackOffsetX: 0.22,
+                setbackOffsetZ: 0.18,
+                colorTint: 0xe2e8f0,
+                roughness: 0.56,
+                metalness: 0.08,
+            },
+            {
+                x: 1.55,
+                z: 0.25,
+                width: 2.1,
+                depth: 4.05,
+                height: Math.max(1.8, towerHeight * (0.38 + densityBias * 0.18)),
+                setbackHeight: Math.max(2.0, towerHeight * 0.42),
+                setbackWidth: 1.05,
+                setbackDepth: 1.55,
+                setbackOffsetX: 0.14,
+                setbackOffsetZ: -0.12,
+                colorTint: 0xdbeafe,
+                roughness: 0.58,
+                metalness: 0.08,
+            },
+        ];
+    }
+
+    if (densityBias > 0.3) {
+        return [
+            {
+                x: -1.85,
+                z: -1.2,
+                width: 2.2,
+                depth: 2.65,
+                height: Math.max(1.6, towerHeight * 0.36),
+                setbackHeight: Math.max(1.2, towerHeight * 0.26),
+                setbackWidth: 1.25,
+                setbackDepth: 1.45,
+                setbackOffsetX: -0.08,
+                setbackOffsetZ: 0.03,
+                colorTint: 0xe2e8f0,
+                roughness: 0.62,
+                metalness: 0.05,
+            },
+            {
+                x: 1.35,
+                z: -0.55,
+                width: 1.75,
+                depth: 2.35,
+                height: Math.max(1.45, towerHeight * 0.3),
+                setbackHeight: 0,
+                colorTint: 0xdbeafe,
+                roughness: 0.64,
+                metalness: 0.05,
+            },
+            {
+                x: -0.2,
+                z: 1.85,
+                width: 3.15,
+                depth: 1.55,
+                height: Math.max(1.2, towerHeight * 0.22),
+                setbackHeight: 0,
+                colorTint: 0xf1f5f9,
+                roughness: 0.68,
+                metalness: 0.02,
+            },
+        ];
+    }
+
+    return [
+        {
+            x: -1.6,
+            z: -0.2,
+            width: 1.95,
+            depth: 2.35,
+            height: Math.max(1.35, towerHeight * 0.24),
+            setbackHeight: 0,
+            colorTint: 0xe5e7eb,
+            roughness: 0.68,
+            metalness: 0.02,
+        },
+        {
+            x: 1.25,
+            z: 0.1,
+            width: 1.75,
+            depth: 2.05,
+            height: Math.max(1.15, towerHeight * 0.2),
+            setbackHeight: 0,
+            colorTint: 0xdbeafe,
+            roughness: 0.68,
+            metalness: 0.02,
+        },
+    ];
+}
+
+function createTowerSetback(group, block, body, spec, heat, buildingIndex) {
+    const setback = new THREE.Mesh(
+        new THREE.BoxGeometry(spec.setbackWidth, spec.setbackHeight, spec.setbackDepth),
+        new THREE.MeshStandardMaterial({
+            color: heat.clone().lerp(new THREE.Color(0xf8fafc), 0.3),
+            emissive: heat,
+            emissiveIntensity: block.uhi_intensity > 3.8 ? 0.07 : 0.02,
+            roughness: Math.max(0.48, spec.roughness - 0.08),
+            metalness: spec.metalness + 0.03,
+        }),
+    );
+    setback.position.set(
+        body.position.x + (spec.setbackOffsetX || 0),
+        body.position.y + body.geometry.parameters.height / 2 + spec.setbackHeight / 2,
+        body.position.z + (spec.setbackOffsetZ || 0),
+    );
+    setback.castShadow = true;
+    setback.receiveShadow = true;
+    setback.userData.block = block;
+    setback.userData.group = group;
+    blockMeshes.push(setback);
+    group.add(setback);
+
+    addFacadeLines(group, setback, spec.setbackWidth, spec.setbackHeight, spec.setbackDepth);
+    createFacadeDetails(group, setback, spec.setbackWidth, spec.setbackHeight, spec.setbackDepth, block, buildingIndex + 5);
+    addRoofTreatment(group, block, setback, spec.setbackWidth, spec.setbackDepth);
 }
 
 function addFacadeLines(group, body, w, h, d) {
@@ -1477,6 +1777,7 @@ function selectBlock(block, mesh) {
         selectedHighlight = null;
     }
     selectedMesh = mesh;
+    selectedBlockId = block.id;
     selectedBlockGroup = mesh.userData.group || mesh.parent;
     selectedBlockGroup.scale.set(1.04, 1.04, 1.04);
 
@@ -1534,6 +1835,13 @@ function selectBlock(block, mesh) {
         <div class="detail-row"><span class="detail-label">Heat Risk</span><span class="detail-value">${block.combined_risk || 'actual data pending'}</span></div>
         <div class="detail-row"><span class="detail-label">3D Meaning</span><span class="detail-value">${block.max_height_m}m height, +${block.uhi_intensity.toFixed(2)}C heat</span></div>
     `;
+    syncEditorControls(block);
+}
+
+function selectBlockById(blockId) {
+    const mesh = blockMeshes.find((item) => item.userData.block?.id === blockId);
+    if (!mesh) return;
+    selectBlock(mesh.userData.block, mesh);
 }
 
 function zoneClassCss(zoneClass) {

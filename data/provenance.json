@@ -519,6 +519,176 @@
         },
         "validation_mae": 0.0
       }
+    },
+    "test-v1_base_20260513_183951": {
+      "artifact_id": "test-v1_base_20260513_183951",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "test-v1"
+      ],
+      "creation_timestamp": "2026-05-13T18:39:51.900547",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "v1_base_20260513_183952": {
+      "artifact_id": "v1_base_20260513_183952",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "v1"
+      ],
+      "creation_timestamp": "2026-05-13T18:39:52.073296",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_delhi_20260513_183952": {
+      "artifact_id": "ds-v1_delhi_20260513_183952",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-13T18:39:52.137823",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_S0_20260513_183956": {
+      "artifact_id": "ds-v1_S0_20260513_183956",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-13T18:39:56.829998",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_S0_20260513_183957": {
+      "artifact_id": "ds-v1_S0_20260513_183957",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-13T18:39:57.214565",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "e9cb9e90-c697-4374-9a99-54a2383f10db": {
+      "artifact_id": "e9cb9e90-c697-4374-9a99-54a2383f10db",
+      "artifact_type": "cfd_dataset",
+      "producing_component": "cfd_runner",
+      "input_artifact_ids": [
+        "1953ee04-3962-490f-b94c-d00ce5386bc0"
+      ],
+      "creation_timestamp": "2026-05-13T19:38:11.552455",
+      "metadata": {
+        "total_samples": 24,
+        "valid_samples": 0,
+        "failed_samples": 24,
+        "mass_conservation_threshold": 0.0001
+      }
+    },
+    "e9cb9e90_base_20260513_193812": {
+      "artifact_id": "e9cb9e90_base_20260513_193812",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "e9cb9e90-c697-4374-9a99-54a2383f10db"
+      ],
+      "creation_timestamp": "2026-05-13T19:38:12.586002",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 2,
+          "encoder_width": 64,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 1.816476583480835
+      }
+    },
+    "500d669e-ea30-4179-abf5-5a4d69d87aa8": {
+      "artifact_id": "500d669e-ea30-4179-abf5-5a4d69d87aa8",
+      "artifact_type": "cfd_dataset",
+      "producing_component": "cfd_runner",
+      "input_artifact_ids": [
+        "b9f4f995-0533-4eac-8fe7-e757c32d765e"
+      ],
+      "creation_timestamp": "2026-05-13T19:38:38.258983",
+      "metadata": {
+        "total_samples": 24,
+        "valid_samples": 24,
+        "failed_samples": 0,
+        "mass_conservation_threshold": 3.5
+      }
+    },
+    "500d669e_base_20260513_193839": {
+      "artifact_id": "500d669e_base_20260513_193839",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "500d669e-ea30-4179-abf5-5a4d69d87aa8"
+      ],
+      "creation_timestamp": "2026-05-13T19:38:39.265959",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 2,
+          "encoder_width": 64,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 2566708736.0
+      }
     }
   }
 }
