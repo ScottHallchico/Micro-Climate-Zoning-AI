@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="3D heat map for MicroClimate Zoning AI">
+    <title>MicroClimate AI - 3D Heat Map</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="map3d.css">
+</head>
+
+<body>
+    <div id="app">
+        <nav class="top-nav">
+            <div class="nav-brand">
+                <div class="brand-icon"></div>
+                <span class="brand-text">MicroClimate AI</span>
+                <span class="brand-badge">Mumbai 3D Heat Map</span>
+            </div>
+            <div class="nav-actions">
+                <a class="nav-link-btn" href="index.html">Dashboard</a>
+                <button class="nav-btn" id="btn-reset-camera" title="Reset Camera">Reset</button>
+            </div>
+        </nav>
+
+        <main class="map3d-layout">
+            <section class="scene-wrap">
+                <canvas id="map3d-canvas"></canvas>
+                <div class="scene-hud">
+                    <div class="hud-title">3D Block Heat Model</div>
+                    <div class="hud-copy">Drag to rotate, scroll to zoom, click a block to inspect it.</div>
+                    <div class="simulation-badges">
+                        <span id="cfd-status-badge" class="sim-badge loading">Loading CFD</span>
+                        <span class="sim-badge wind">Wind Flow</span>
+                        <span class="sim-badge solar">Solar Layer</span>
+                        <span class="sim-badge thermal">Thermal Data</span>
+                        <span id="pinn-status-badge" class="sim-badge pinn loading">Loading PINN</span>
+                    </div>
+                </div>
+                <div class="simulation-callout">
+                    <div><strong>CFD wind</strong><span>Blue stream bands show airflow paths and ventilation strength.</span></div>
+                    <div><strong>Sunlight</strong><span>Golden beams, bright parcel overlays, and shadows show solar exposure.</span></div>
+                    <div><strong>Thermal data</strong><span>Red thermal rings and labels show surface temperature and heat storage.</span></div>
+                    <div><strong>PINN surrogate</strong><span>Purple halos show predicted thermal response from block features.</span></div>
+                    <div><strong>Heat risk</strong><span>Transparent vertical plumes mark combined heat burden.</span></div>
+                </div>
+                <div class="heat-legend">
+                    <span>Cool</span>
+                    <div class="heat-bar"></div>
+                    <span>Hot</span>
+                </div>
+            </section>
+
+            <aside class="details-panel">
+                <section class="panel">
+                    <h2 class="panel-title">Selected Block</h2>
+                    <div id="block-details" class="block-details">
+                        <p class="placeholder-text">Click a 3D block to view details.</p>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <h2 class="panel-title">Zone Classes</h2>
+                    <div class="legend-items">
+                        <div class="legend-item"><span class="legend-color wind"></span>Wind Corridor Critical</div>
+                        <div class="legend-item"><span class="legend-color thermal"></span>Thermal Remediation</div>
+                        <div class="legend-item"><span class="legend-color density"></span>Density Adaptive</div>
+                        <div class="legend-item"><span class="legend-color baseline"></span>Baseline Unchanged</div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <h2 class="panel-title">How To Read It</h2>
+                    <div class="readout-list">
+                        <div><strong>Building cluster</strong><span>Represents built-up mass inside each city block.</span></div>
+                        <div><strong>Height</strong><span>Shows the block's max building height.</span></div>
+                        <div><strong>Heat color</strong><span>Blue is cooler, red is hotter.</span></div>
+                        <div><strong>Zone ring</strong><span>Shows the block's planning classification.</span></div>
+                        <div><strong>Heat plume</strong><span>Appears above hotter blocks.</span></div>
+                        <div><strong>Ground heat field</strong><span>Colored parcel surfaces show local heat intensity.</span></div>
+                        <div><strong>Thermal labels</strong><span>Surface temperature readings come from the backend thermal model.</span></div>
+                        <div><strong>PINN layer</strong><span>Purple halos estimate how design changes may alter heat response.</span></div>
+                        <div><strong>Green elements</strong><span>Sidewalk tree rows, pocket trees, planters, and green roofs show cooling interventions.</span></div>
+                        <div><strong>Urban details</strong><span>Sidewalks, crosswalks, benches, windows, and rooftop units add city context.</span></div>
+                        <div><strong>Roof details</strong><span>Bright roofs and panels mark reflective or solar-ready surfaces.</span></div>
+                        <div><strong>Street layer</strong><span>Roads, crosswalks, and trees show urban context.</span></div>
+                        <div><strong>Blue wind bands</strong><span>Show protected wind-corridor flow paths.</span></div>
+                    </div>
+                </section>
+            </aside>
+        </main>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js"
+            }
+        }
+    </script>
+    <script type="module" src="map3d.js?v=20260513-persist-1"></script>
+</body>
+
+</html>

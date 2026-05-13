@@ -65,6 +65,28 @@ class TestCFDRunner:
         assert artifact.valid_sample_count <= artifact.sample_count
         assert len(artifact.samples) == artifact.valid_sample_count
 
+    def test_block_microclimate_outputs_wind_and_solar_metrics(self, tmp_path):
+        runner = self._make_runner(tmp_path)
+        results = runner.simulate_block_microclimate(blocks=[{
+            "id": "BLK-TEST",
+            "zone_class": "WIND_CORRIDOR_CRITICAL",
+            "max_height_m": 24,
+            "svf": 0.5,
+            "lambda_p": 0.4,
+            "hw_ratio": 1.2,
+            "albedo": 0.3,
+            "green_cover": 20,
+        }])
+
+        assert len(results) == 1
+        assert results[0]["block_id"] == "BLK-TEST"
+        assert results[0]["wind"]["avg_wind_speed_ms"] > 0
+        assert 0 <= results[0]["wind"]["ventilation_score"] <= 1
+        assert results[0]["solar"]["solar_radiation_wm2"] > 0
+        assert results[0]["thermal"]["surface_temp_c"] > 0
+        assert results[0]["thermal"]["heat_storage_wm2"] >= 0
+        assert 0 <= results[0]["microclimate"]["heat_burden_score"] <= 1
+
 
 class TestPINNModel:
     """Test PINN architecture, prediction, and OOD detection."""

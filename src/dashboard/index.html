@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="Micro-Climate Zoning AI — Interactive scenario dashboard for city planners to explore physics-grounded zoning configurations">
-    <title>MicroClimate Zoning AI — Scenario Dashboard</title>
+    <title>MicroClimate Zoning AI - Mumbai Scenario Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -35,9 +35,12 @@
                     </svg>
                 </div>
                 <span class="brand-text">MicroClimate AI</span>
-                <span class="brand-badge">Scenario Dashboard</span>
+                <span class="brand-badge">Mumbai Dashboard</span>
             </div>
             <div class="nav-actions">
+                <a class="nav-link-btn" href="3d-map.html" title="Open 3D Heat Map">
+                    3D Map
+                </a>
                 <button class="nav-btn" id="btn-refresh" title="Refresh Data">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M13.65 2.35A8 8 0 1014 8h-2a6 6 0 11-1.76-4.24L8 6h6V0l-2.35 2.35z" />
@@ -154,6 +157,9 @@
                         </div>
                     </div>
                 </div>
+                <button class="map-legend-toggle" id="map-legend-toggle" type="button" title="Show map legend">
+                    Legend
+                </button>
             </main>
 
             <!-- Right Sidebar: Block Details & Community Heat Index -->
@@ -200,7 +206,7 @@
         </div>
     </div>
 
-    <script src="dashboard.js"></script>
+    <script src="dashboard.js?v=20260513-persist-1"></script>
 </body>
 
 </html>
