@@ -61,6 +61,35 @@ class TestGovernanceAPI:
         data = resp.json()
         assert data["status"] == "healthy"
 
+    def test_pinn_prediction_endpoint_returns_demo_surrogate_metrics(self, client):
+        resp = client.post(
+            "/v1/pinn/predict",
+            json={
+                "blocks": [{
+                    "id": "BLK-03",
+                    "zone_class": "DENSITY_ADAPTIVE",
+                    "max_height_m": 27,
+                    "uhi_intensity": 4.1,
+                    "svf": 0.5,
+                    "lambda_p": 0.49,
+                    "hw_ratio": 0.8,
+                    "albedo": 0.26,
+                    "green_cover": 20,
+                    "wind_speed": 2.8,
+                    "solar_radiation_wm2": 610,
+                    "surface_temp_c": 39.2,
+                }],
+            },
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["simulation_type"] == "pinn_surrogate"
+        assert data["block_count"] == 1
+        result = data["results"][0]["pinn"]
+        assert "predicted_surface_temp_c" in result
+        assert 0 <= result["confidence"] <= 1
+        assert result["training_dataset_version"] == "untrained-pinn-actual-inputs-v1"
+
     def test_unauthenticated_returns_401(self, client, _loaded_directive):
         resp = client.post("/v1/permit/check", json={
             "block_id": "BLK-04",

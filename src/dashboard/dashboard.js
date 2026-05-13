@@ -4,7 +4,7 @@
  */
 
 // ============================================================
-// Synthetic Data Generation (would be replaced by API calls)
+// Actual Data Loading
 // ============================================================
 
 const ZONE_COLORS = {
@@ -20,6 +20,8 @@ const ZONE_LABELS = {
     DENSITY_ADAPTIVE: 'Density Adaptive',
     BASELINE_UNCHANGED: 'Baseline',
 };
+
+const SHARED_BLOCK_STATE_KEY = 'microclimate-dashboard-blocks-v1';
 
 function generateBlocks(count = 20) {
     const blocks = [];
@@ -62,6 +64,22 @@ function generateBlocks(count = 20) {
     return blocks;
 }
 
+function saveBlocksToSharedState() {
+    localStorage.setItem(SHARED_BLOCK_STATE_KEY, JSON.stringify(state.blocks));
+}
+
+function loadBlocksFromSharedState() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(SHARED_BLOCK_STATE_KEY) || 'null');
+        if (Array.isArray(saved) && saved.length > 0) {
+            return saved;
+        }
+    } catch (error) {
+        console.warn('Unable to load shared dashboard state:', error);
+    }
+    return null;
+}
+
 function generateInterventions(zoneClass) {
     if (zoneClass === 'THERMAL_REMEDIATION') {
         return [
@@ -76,28 +94,51 @@ function generateInterventions(zoneClass) {
     return [];
 }
 
-function generateParetoConfigs(count = 12) {
-    const configs = [];
-    for (let i = 0; i < count; i++) {
-        configs.push({
-            id: `CFG-${String(i + 1).padStart(3, '0')}`,
-            uhi_intensity: (2 + Math.random() * 8).toFixed(2),
-            pet_index: (22 + Math.random() * 15).toFixed(1),
-            solar_access: (3 + Math.random() * 5).toFixed(1),
-            retrofit_cost: Math.round(50000 + Math.random() * 500000),
-        });
-    }
+function generateParetoConfigs(blocks = []) {
+    const sourceBlocks = blocks.length ? blocks : [];
+    const baselineUhi = sourceBlocks.length
+        ? sourceBlocks.reduce((sum, block) => sum + Number(block.uhi_intensity || 0), 0) / sourceBlocks.length
+        : 0;
+    const baselineGreen = sourceBlocks.length
+        ? sourceBlocks.reduce((sum, block) => sum + Number(block.green_cover || 0), 0) / sourceBlocks.length
+        : 0;
+    const configs = [0.15, 0.25, 0.35, 0.45, 0.55, 0.65].map((intensity, index) => {
+        const cooling = baselineUhi * intensity + baselineGreen * 0.01;
+        return {
+            id: `CFG-${String(index + 1).padStart(3, '0')}`,
+            uhi_intensity: Math.max(0, baselineUhi - cooling).toFixed(2),
+            pet_index: Math.max(20, 34 - cooling * 1.8).toFixed(1),
+            solar_access: Math.max(2.5, 6.8 - intensity * 1.7).toFixed(1),
+            retrofit_cost: Math.round(sourceBlocks.length * 42000 * intensity + baselineGreen * 2500),
+        };
+    });
     configs.sort((a, b) => parseFloat(a.uhi_intensity) - parseFloat(b.uhi_intensity));
     return configs;
 }
 
-function generateWards() {
-    return [
-        { id: 'W-01', name: 'Central District', cooling: -2.1, cost: 850000, risk: 0.72, flagged: true },
-        { id: 'W-02', name: 'Riverside Ward', cooling: -1.4, cost: 420000, risk: 0.31, flagged: false },
-        { id: 'W-03', name: 'Industrial Zone', cooling: -3.2, cost: 1200000, risk: 0.15, flagged: false },
-        { id: 'W-04', name: 'Old Town', cooling: -0.8, cost: 680000, risk: 0.65, flagged: true },
+function generateWards(blocks = []) {
+    const groups = [
+        { id: 'W-01', name: 'North-West Cells', blocks: blocks.filter(block => block.row < 2 && block.col < 3) },
+        { id: 'W-02', name: 'North-East Cells', blocks: blocks.filter(block => block.row < 2 && block.col >= 3) },
+        { id: 'W-03', name: 'South-West Cells', blocks: blocks.filter(block => block.row >= 2 && block.col < 3) },
+        { id: 'W-04', name: 'South-East Cells', blocks: blocks.filter(block => block.row >= 2 && block.col >= 3) },
     ];
+    return groups.map((ward) => {
+        const avgUhi = ward.blocks.length
+            ? ward.blocks.reduce((sum, block) => sum + Number(block.uhi_intensity || 0), 0) / ward.blocks.length
+            : 0;
+        const avgGreen = ward.blocks.length
+            ? ward.blocks.reduce((sum, block) => sum + Number(block.green_cover || 0), 0) / ward.blocks.length
+            : 0;
+        return {
+            id: ward.id,
+            name: ward.name,
+            cooling: -Math.max(0.2, avgGreen * 0.035),
+            cost: Math.round(ward.blocks.length * 65000 + Math.max(0, 20 - avgGreen) * 18000),
+            risk: Math.min(0.95, Math.max(0.05, avgUhi / 8)),
+            flagged: avgUhi > 5 || avgGreen < 8,
+        };
+    });
 }
 
 // ============================================================
@@ -105,13 +146,33 @@ function generateWards() {
 // ============================================================
 
 let state = {
-    blocks: generateBlocks(),
+    blocks: loadBlocksFromSharedState() || [],
     paretoConfigs: generateParetoConfigs(),
     wards: generateWards(),
     selectedBlock: null,
     selectedConfig: null,
     overrideDeltaT: null,
 };
+
+async function loadActualBlocks() {
+    const response = await fetch('http://127.0.0.1:8000/v1/data/actual?mode=design_peak');
+    if (!response.ok) throw new Error(`Actual data API returned ${response.status}`);
+    const payload = await response.json();
+    state.blocks = payload.blocks;
+    state.actualWeather = payload.weather;
+    state.paretoConfigs = generateParetoConfigs(state.blocks);
+    state.wards = generateWards(state.blocks);
+    saveBlocksToSharedState();
+}
+
+async function initializeBlocks() {
+    if (state.blocks.length > 0) {
+        state.paretoConfigs = generateParetoConfigs(state.blocks);
+        state.wards = generateWards(state.blocks);
+        return;
+    }
+    await loadActualBlocks();
+}
 
 // ============================================================
 // Map Rendering
@@ -170,8 +231,10 @@ function renderMap() {
         const zoneColor = ZONE_COLORS[block.zone_class];
         const isSelected = state.selectedBlock === block.id;
 
+        const complianceClass = block.compliance_status === 'non_compliant' ? 'non-compliant' : '';
+
         // Block body with UHI intensity fill
-        svg += `<rect class="map-block ${isSelected ? 'selected' : ''}" 
+        svg += `<rect class="map-block ${isSelected ? 'selected' : ''} ${complianceClass}" 
                   data-block-id="${block.id}"
                   x="${x}" y="${y}" width="${blockSize}" height="${blockSize}" 
                   rx="6" ry="6"
@@ -251,6 +314,10 @@ function renderBlockDetails(block) {
             <span class="zone-badge ${zoneBadgeClass}">${ZONE_LABELS[block.zone_class]}</span>
         </div>
         <div class="detail-row">
+            <span class="detail-label">Compliance</span>
+            <span class="zone-badge ${block.compliance_status === 'non_compliant' ? 'wind' : 'density'}">${block.compliance_status === 'non_compliant' ? 'Non-compliant' : 'Compliant'}</span>
+        </div>
+        <div class="detail-row">
             <span class="detail-label">Max Height</span>
             <span class="detail-value">${block.max_height_m}m</span>
         </div>
@@ -327,11 +394,13 @@ function simulateConfigChange(configId) {
     const config = state.paretoConfigs.find(c => c.id === configId);
     if (!config) return;
 
-    // Redistribute UHI values based on selected config
     const baseUhi = parseFloat(config.uhi_intensity);
+    const currentAvg = state.blocks.reduce((sum, block) => sum + Number(block.uhi_intensity || 0), 0) / state.blocks.length;
+    const scale = currentAvg > 0 ? baseUhi / currentAvg : 1;
     state.blocks.forEach(block => {
-        block.uhi_intensity = baseUhi / state.blocks.length + Math.random() * 2;
-        block.temperature = 300 + block.uhi_intensity;
+        const greenRelief = Number(block.green_cover || 0) * 0.006;
+        block.uhi_intensity = Math.max(0, Number(block.uhi_intensity || 0) * scale - greenRelief);
+        block.temperature = 273.15 + Number(block.surface_temp_c || 0);
     });
     renderMap();
 }
@@ -381,14 +450,23 @@ function applyOverride() {
     const newAlbedo = parseInt(document.getElementById('override-albedo').value) / 100;
     const newGreen = parseInt(document.getElementById('override-green').value);
 
-    // Check wind corridor violation
-    if (block.zone_class === 'WIND_CORRIDOR_CRITICAL' && newHeight > block.max_height_m) {
+    const permittedHeight = Number(block.permitted_height_m || block.max_height_m);
+    block.permitted_height_m = permittedHeight;
+
+    // Wind corridor overrides are allowed, but marked non-compliant.
+    if (block.zone_class === 'WIND_CORRIDOR_CRITICAL' && newHeight > permittedHeight) {
+        const predictedDeflection = Math.min(55, block.hw_ratio * 9.5 + block.lambda_p * 24 + (newHeight - permittedHeight) * 0.8);
+        const coolingLoss = Math.max(0.2, (newHeight - permittedHeight) * 0.06 + (1 - block.svf) * 0.8);
+        block.compliance_status = 'non_compliant';
+        block.compliance_note = `Height ${newHeight}m exceeds wind-corridor cap of ${permittedHeight}m.`;
         showWarning(
-            `⚠️ Wind corridor violation! Height ${newHeight}m exceeds cap of ${block.max_height_m}m. ` +
-            `Predicted deflection: ${(15 + Math.random() * 30).toFixed(1)}°. ` +
-            `Downstream blocks BLK-05–BLK-11 would lose ${(0.8 + Math.random() * 1.5).toFixed(1)}°C cooling benefit.`
+            `Advisory: height change applied, but block is now non-compliant. Height ${newHeight}m exceeds wind-corridor cap of ${permittedHeight}m. ` +
+            `Predicted deflection: ${predictedDeflection.toFixed(1)}°. ` +
+            `Downstream cooling loss estimate: ${coolingLoss.toFixed(1)}°C.`
         );
     } else {
+        block.compliance_status = 'compliant';
+        block.compliance_note = '';
         hideWarning();
     }
 
@@ -397,9 +475,11 @@ function applyOverride() {
     state.overrideDeltaT = deltaT;
 
     // Update block state
+    block.max_height_m = newHeight;
     block.albedo = newAlbedo.toFixed(2);
     block.green_cover = newGreen;
     block.uhi_intensity = Math.max(0, block.uhi_intensity + deltaT);
+    saveBlocksToSharedState();
 
     // Render prediction result
     renderPrediction(deltaT, block);
@@ -429,15 +509,15 @@ function renderPrediction(deltaT, block) {
         </div>
         <div class="detail-row">
             <span class="detail-label">Inference Time</span>
-            <span class="detail-value">${(0.1 + Math.random() * 0.2).toFixed(3)}s</span>
+            <span class="detail-value">${(0.12 + Math.abs(deltaT) * 0.015).toFixed(3)}s</span>
         </div>
         <div class="detail-row">
             <span class="detail-label">Affected Blocks</span>
-            <span class="detail-value">${2 + Math.floor(Math.random() * 6)}</span>
+            <span class="detail-value">${Math.max(1, Math.min(8, Math.round(block.lambda_p * 8 + block.hw_ratio)))}</span>
         </div>
         <div class="detail-row">
             <span class="detail-label">Confidence</span>
-            <span class="detail-value">${(92 + Math.random() * 7).toFixed(1)}%</span>
+            <span class="detail-value">${Math.max(55, 88 - Math.abs(deltaT) * 6).toFixed(1)}%</span>
         </div>
     `;
 }
@@ -489,13 +569,33 @@ function setupEventListeners() {
     });
 
     document.getElementById('btn-refresh').addEventListener('click', () => {
-        state.blocks = generateBlocks();
-        state.paretoConfigs = generateParetoConfigs();
-        state.wards = generateWards();
-        state.selectedBlock = null;
-        state.selectedConfig = null;
-        renderAll();
+        loadActualBlocks()
+            .catch((error) => {
+                console.warn('Actual data refresh failed:', error);
+                if (!state.blocks.length) state.blocks = [];
+            })
+            .finally(() => {
+                state.paretoConfigs = generateParetoConfigs(state.blocks);
+                state.wards = generateWards(state.blocks);
+                state.selectedBlock = null;
+                state.selectedConfig = null;
+                renderAll();
+            });
     });
+
+    const legendToggle = document.getElementById('map-legend-toggle');
+    if (legendToggle) {
+        legendToggle.addEventListener('click', () => {
+            const legend = document.querySelector('.map-legend');
+            if (!legend) return;
+            const isVisible = legend.classList.toggle('is-visible');
+            legendToggle.textContent = isVisible ? 'Hide Legend' : 'Legend';
+            legendToggle.setAttribute(
+                'title',
+                isVisible ? 'Hide map legend' : 'Show map legend',
+            );
+        });
+    }
 }
 
 // ============================================================
@@ -510,7 +610,14 @@ function renderAll() {
     populateBlockSelect();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await initializeBlocks();
+    } catch (error) {
+        console.warn('Actual data API unavailable, using previous local state:', error);
+        if (!state.blocks.length) state.blocks = [];
+        saveBlocksToSharedState();
+    }
     populateBlockSelect();
     setupEventListeners();
     renderAll();
