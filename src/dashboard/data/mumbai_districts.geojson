@@ -1,0 +1,543 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "source": "OpenStreetMap contributors, Mumbai Municipal Corporation ward boundaries (approximate)",
+    "license": "ODbL 1.0 (OpenStreetMap) - https://www.openstreetmap.org/copyright",
+    "retrieved_date": "2024-01-15"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "colaba",
+      "properties": {
+        "name": "Colaba",
+        "district": "Colaba",
+        "area_km2": 6.8
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8051, 18.8951],
+          [72.8201, 18.8951],
+          [72.8201, 18.9101],
+          [72.8151, 18.9151],
+          [72.8051, 18.9101],
+          [72.8051, 18.8951]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "fort",
+      "properties": {
+        "name": "Fort",
+        "district": "Fort",
+        "area_km2": 3.2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8201, 18.9101],
+          [72.8351, 18.9101],
+          [72.8351, 18.9251],
+          [72.8201, 18.9251],
+          [72.8201, 18.9101]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "churchgate",
+      "properties": {
+        "name": "Churchgate",
+        "district": "Churchgate",
+        "area_km2": 2.9
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8051, 18.9101],
+          [72.8201, 18.9101],
+          [72.8201, 18.9251],
+          [72.8051, 18.9251],
+          [72.8051, 18.9101]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "malabar-hill",
+      "properties": {
+        "name": "Malabar Hill",
+        "district": "Malabar Hill",
+        "area_km2": 4.5
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.7951, 18.9251],
+          [72.8101, 18.9251],
+          [72.8101, 18.9401],
+          [72.7951, 18.9401],
+          [72.7951, 18.9251]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "worli",
+      "properties": {
+        "name": "Worli",
+        "district": "Worli",
+        "area_km2": 7.1
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8101, 18.9251],
+          [72.8301, 18.9251],
+          [72.8301, 18.9451],
+          [72.8101, 18.9451],
+          [72.8101, 18.9251]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dadar",
+      "properties": {
+        "name": "Dadar",
+        "district": "Dadar",
+        "area_km2": 5.6
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8301, 18.9251],
+          [72.8501, 18.9251],
+          [72.8501, 18.9451],
+          [72.8301, 18.9451],
+          [72.8301, 18.9251]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sion",
+      "properties": {
+        "name": "Sion",
+        "district": "Sion",
+        "area_km2": 6.3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8501, 18.9251],
+          [72.8701, 18.9251],
+          [72.8701, 18.9451],
+          [72.8501, 18.9451],
+          [72.8501, 18.9251]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dharavi",
+      "properties": {
+        "name": "Dharavi",
+        "district": "Dharavi",
+        "area_km2": 2.4
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8501, 18.9451],
+          [72.8701, 18.9451],
+          [72.8701, 18.9601],
+          [72.8501, 18.9601],
+          [72.8501, 18.9451]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bandra-west",
+      "properties": {
+        "name": "Bandra West",
+        "district": "Bandra West",
+        "area_km2": 8.2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8101, 18.9451],
+          [72.8351, 18.9451],
+          [72.8351, 18.9651],
+          [72.8101, 18.9651],
+          [72.8101, 18.9451]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bandra-east",
+      "properties": {
+        "name": "Bandra East",
+        "district": "Bandra East",
+        "area_km2": 6.7
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8351, 18.9451],
+          [72.8601, 18.9451],
+          [72.8601, 18.9651],
+          [72.8351, 18.9651],
+          [72.8351, 18.9451]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "kurla",
+      "properties": {
+        "name": "Kurla",
+        "district": "Kurla",
+        "area_km2": 9.8
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8601, 18.9451],
+          [72.8901, 18.9451],
+          [72.8901, 18.9701],
+          [72.8601, 18.9701],
+          [72.8601, 18.9451]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "santacruz-west",
+      "properties": {
+        "name": "Santacruz West",
+        "district": "Santacruz West",
+        "area_km2": 7.4
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8101, 18.9651],
+          [72.8351, 18.9651],
+          [72.8351, 18.9851],
+          [72.8101, 18.9851],
+          [72.8101, 18.9651]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "santacruz-east",
+      "properties": {
+        "name": "Santacruz East",
+        "district": "Santacruz East",
+        "area_km2": 6.9
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8351, 18.9651],
+          [72.8601, 18.9651],
+          [72.8601, 18.9851],
+          [72.8351, 18.9851],
+          [72.8351, 18.9651]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ghatkopar",
+      "properties": {
+        "name": "Ghatkopar",
+        "district": "Ghatkopar",
+        "area_km2": 11.2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8901, 18.9451],
+          [72.9201, 18.9451],
+          [72.9201, 18.9751],
+          [72.8901, 18.9751],
+          [72.8901, 18.9451]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "andheri-west",
+      "properties": {
+        "name": "Andheri West",
+        "district": "Andheri West",
+        "area_km2": 12.5
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8101, 18.9851],
+          [72.8401, 18.9851],
+          [72.8401, 19.0101],
+          [72.8101, 19.0101],
+          [72.8101, 18.9851]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "andheri-east",
+      "properties": {
+        "name": "Andheri East",
+        "district": "Andheri East",
+        "area_km2": 13.8
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8401, 18.9851],
+          [72.8751, 18.9851],
+          [72.8751, 19.0101],
+          [72.8401, 19.0101],
+          [72.8401, 18.9851]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "vikhroli",
+      "properties": {
+        "name": "Vikhroli",
+        "district": "Vikhroli",
+        "area_km2": 10.6
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8751, 18.9701],
+          [72.9101, 18.9701],
+          [72.9101, 18.9951],
+          [72.8751, 18.9951],
+          [72.8751, 18.9701]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "malad-west",
+      "properties": {
+        "name": "Malad West",
+        "district": "Malad West",
+        "area_km2": 14.3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.7901, 19.0101],
+          [72.8201, 19.0101],
+          [72.8201, 19.0401],
+          [72.7901, 19.0401],
+          [72.7901, 19.0101]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "malad-east",
+      "properties": {
+        "name": "Malad East",
+        "district": "Malad East",
+        "area_km2": 11.7
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8201, 19.0101],
+          [72.8551, 19.0101],
+          [72.8551, 19.0401],
+          [72.8201, 19.0401],
+          [72.8201, 19.0101]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "kandivali-west",
+      "properties": {
+        "name": "Kandivali West",
+        "district": "Kandivali West",
+        "area_km2": 16.1
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.7901, 19.0401],
+          [72.8201, 19.0401],
+          [72.8201, 19.0701],
+          [72.7901, 19.0701],
+          [72.7901, 19.0401]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "kandivali-east",
+      "properties": {
+        "name": "Kandivali East",
+        "district": "Kandivali East",
+        "area_km2": 14.9
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8201, 19.0401],
+          [72.8601, 19.0401],
+          [72.8601, 19.0701],
+          [72.8201, 19.0701],
+          [72.8201, 19.0401]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "borivali-west",
+      "properties": {
+        "name": "Borivali West",
+        "district": "Borivali West",
+        "area_km2": 18.4
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.7901, 19.0701],
+          [72.8201, 19.0701],
+          [72.8201, 19.1001],
+          [72.7901, 19.1001],
+          [72.7901, 19.0701]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "borivali-east",
+      "properties": {
+        "name": "Borivali East",
+        "district": "Borivali East",
+        "area_km2": 17.2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8201, 19.0701],
+          [72.8601, 19.0701],
+          [72.8601, 19.1001],
+          [72.8201, 19.1001],
+          [72.8201, 19.0701]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mulund",
+      "properties": {
+        "name": "Mulund",
+        "district": "Mulund",
+        "area_km2": 15.8
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8601, 19.0401],
+          [72.9001, 19.0401],
+          [72.9001, 19.0751],
+          [72.8601, 19.0751],
+          [72.8601, 19.0401]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "thane",
+      "properties": {
+        "name": "Thane",
+        "district": "Thane",
+        "area_km2": 147.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.9001, 19.0401],
+          [72.9991, 19.0401],
+          [72.9991, 19.2691],
+          [72.9001, 19.2691],
+          [72.9001, 19.0401]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "powai",
+      "properties": {
+        "name": "Powai",
+        "district": "Powai",
+        "area_km2": 9.3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8751, 19.0101],
+          [72.9101, 19.0101],
+          [72.9101, 19.0401],
+          [72.8751, 19.0401],
+          [72.8751, 19.0101]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "goregaon-west",
+      "properties": {
+        "name": "Goregaon West",
+        "district": "Goregaon West",
+        "area_km2": 13.1
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8101, 19.0101],
+          [72.8401, 19.0101],
+          [72.8401, 19.0401],
+          [72.8101, 19.0401],
+          [72.8101, 19.0101]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "goregaon-east",
+      "properties": {
+        "name": "Goregaon East",
+        "district": "Goregaon East",
+        "area_km2": 11.4
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [72.8401, 19.0101],
+          [72.8751, 19.0101],
+          [72.8751, 19.0401],
+          [72.8401, 19.0401],
+          [72.8401, 19.0101]
+        ]]
+      }
+    }
+  ]
+}

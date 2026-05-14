@@ -30,6 +30,85 @@ from src.pinn.model import PINNModel
 
 logger = logging.getLogger(__name__)
 
+# ---------------------------------------------------------------------------
+# GeoJSON district geometry cache
+# ---------------------------------------------------------------------------
+
+GEOJSON_PATH = (Path(__file__).resolve().parents[2] / "src" / "dashboard" / "data" / "mumbai_districts.geojson")
+
+_district_geometry_cache: dict[str, dict] = {}
+
+
+def _load_district_geometry_cache() -> None:
+    """Read the Mumbai districts GeoJSON file at module load time.
+
+    Populates ``_district_geometry_cache`` keyed by Feature ``id``.
+    Logs ``metadata.source`` and ``metadata.retrieved_date`` at INFO level on
+    success.  Logs an ERROR identifying any missing/empty metadata fields and
+    continues with an empty cache if the file is absent or metadata is invalid.
+    """
+    global _district_geometry_cache
+
+    if not GEOJSON_PATH.exists():
+        logger.error(
+            "GeoJSON file not found at %s — district geometry cache will be empty.",
+            GEOJSON_PATH,
+        )
+        return
+
+    try:
+        import json as _json
+        with GEOJSON_PATH.open("r", encoding="utf-8") as fh:
+            geojson = _json.load(fh)
+    except Exception as exc:
+        logger.error(
+            "Failed to parse GeoJSON file %s: %s — district geometry cache will be empty.",
+            GEOJSON_PATH,
+            exc,
+        )
+        return
+
+    # Validate and log metadata fields
+    metadata = geojson.get("metadata")
+    missing_fields: list[str] = []
+    if not metadata:
+        missing_fields = ["metadata.source", "metadata.retrieved_date"]
+    else:
+        if not metadata.get("source"):
+            missing_fields.append("metadata.source")
+        if not metadata.get("retrieved_date"):
+            missing_fields.append("metadata.retrieved_date")
+
+    if missing_fields:
+        logger.error(
+            "GeoJSON metadata field(s) missing or empty in %s: %s — district geometry cache will be empty.",
+            GEOJSON_PATH,
+            ", ".join(missing_fields),
+        )
+        return
+
+    logger.info(
+        "GeoJSON loaded from %s — source: %s, retrieved_date: %s",
+        GEOJSON_PATH,
+        metadata["source"],
+        metadata["retrieved_date"],
+    )
+
+    cache: dict[str, dict] = {}
+    for feature in geojson.get("features", []):
+        feature_id = feature.get("id")
+        geometry = feature.get("geometry")
+        if feature_id and geometry:
+            cache[feature_id] = geometry
+
+    _district_geometry_cache = cache
+    logger.info("District geometry cache populated with %d entries.", len(_district_geometry_cache))
+
+
+# Populate the cache at module load time
+_load_district_geometry_cache()
+
+
 app = FastAPI(
     title="Micro-Climate Zoning AI — Governance API",
     description="REST API for building permit compliance checking against physics-grounded zoning codes",
@@ -298,8 +377,14 @@ def _build_actual_blocks(weather: dict[str, Any]) -> list[dict[str, Any]]:
         surface_temp = weather["soil_temperature_0cm_c"] + morphology_heat - cooling
         air_temp = weather["temperature_c"] + morphology_heat * 0.28 - green_cover * 0.012
         uhi = max(0.0, surface_temp - weather["temperature_c"])
+        block_id = row["block_id"]
         blocks.append({
-            "id": row["block_id"],
+            "id": block_id,
+            "district_name": row.get("district_name", ""),
+            "centroid_lat": _as_float(row.get("centroid_lat")),
+            "centroid_lon": _as_float(row.get("centroid_lon")),
+            "area_km2": _as_float(row.get("area_km2")),
+            "geometry": _district_geometry_cache.get(block_id),
             "col": int(_as_float(row["col"])),
             "row": int(_as_float(row["row"])),
             "zone_class": _classify_actual_zone(row),
