@@ -3,6 +3,9 @@
  * Interactive city block map with PINN predictions and Pareto front exploration.
  */
 
+import { loadMumbaiGeoJSON } from './geojson-loader.js';
+import { projectToSVG } from './district-projector.js';
+
 // ============================================================
 // Actual Data Loading
 // ============================================================
@@ -172,6 +175,7 @@ let state = {
     selectedBlock: null,
     selectedConfig: null,
     overrideDeltaT: null,
+    geoJSONFeatures: [],
 };
 
 async function loadActualBlocks() {
@@ -191,17 +195,21 @@ async function initializeBlocks() {
     if (state.blocks.length > 0) {
         state.paretoConfigs = generateParetoConfigs(state.blocks);
         state.wards = generateWards(state.blocks);
-        return;
+    } else {
+        try {
+            await loadActualBlocks();
+        } catch (error) {
+            console.warn('Actual data API unavailable, using generated fallback blocks:', error);
+            state.blocks = generateBlocks().map((block, index) => normalizeDashboardBlock(block, index));
+            state.paretoConfigs = generateParetoConfigs(state.blocks);
+            state.wards = generateWards(state.blocks);
+            saveBlocksToSharedState();
+        }
     }
-    try {
-        await loadActualBlocks();
-    } catch (error) {
-        console.warn('Actual data API unavailable, using generated fallback blocks:', error);
-        state.blocks = generateBlocks().map((block, index) => normalizeDashboardBlock(block, index));
-        state.paretoConfigs = generateParetoConfigs(state.blocks);
-        state.wards = generateWards(state.blocks);
-        saveBlocksToSharedState();
-    }
+
+    // Load GeoJSON district boundaries
+    const geoJSONResult = await loadMumbaiGeoJSON('./data/mumbai_districts.geojson');
+    state.geoJSONFeatures = geoJSONResult !== null ? geoJSONResult.features : [];
 }
 
 // ============================================================

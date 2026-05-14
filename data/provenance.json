@@ -689,6 +689,86 @@
         },
         "validation_mae": 2566708736.0
       }
+    },
+    "test-v1_base_20260514_171708": {
+      "artifact_id": "test-v1_base_20260514_171708",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "test-v1"
+      ],
+      "creation_timestamp": "2026-05-14T17:17:08.434999",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "v1_base_20260514_171708": {
+      "artifact_id": "v1_base_20260514_171708",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "v1"
+      ],
+      "creation_timestamp": "2026-05-14T17:17:08.581032",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_delhi_20260514_171708": {
+      "artifact_id": "ds-v1_delhi_20260514_171708",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-14T17:17:08.666267",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
+    },
+    "ds-v1_S0_20260514_171710": {
+      "artifact_id": "ds-v1_S0_20260514_171710",
+      "artifact_type": "pinn_checkpoint",
+      "producing_component": "pinn_model",
+      "input_artifact_ids": [
+        "ds-v1"
+      ],
+      "creation_timestamp": "2026-05-14T17:17:10.654094",
+      "metadata": {
+        "architecture": {
+          "input_dim": 10,
+          "encoder_layers": 8,
+          "encoder_width": 512,
+          "activation": "siren",
+          "wind_head_outputs": 4,
+          "energy_head_outputs": 4
+        },
+        "validation_mae": 0.0
+      }
     }
   }
 }

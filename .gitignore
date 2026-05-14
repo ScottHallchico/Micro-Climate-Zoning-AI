@@ -66,4 +66,5 @@ alembic/__pycache__/
 tests/__pycache__/
 
 # Project-specific generated data
-data/*.tmp
+data/*.tmpnode_modules/ 
+node_modules/
