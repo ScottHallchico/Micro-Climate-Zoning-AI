@@ -231,10 +231,14 @@ async function loadCFDMicroclimate() {
         applyCFDResults(payload.results || []);
         updateHud("CFD + solar model loaded from backend");
         await loadPINNPredictions();
+        saveBlocksToSharedState();
+        refreshSelectedBlockDetails();
     } catch (error) {
         updateHud("Actual CFD/weather API unavailable");
         console.warn("CFD API unavailable:", error);
         await loadPINNPredictions();
+        saveBlocksToSharedState();
+        refreshSelectedBlockDetails();
     }
 }
 
@@ -292,6 +296,7 @@ async function loadPINNPredictions() {
         applyPINNResults(payload.results || []);
         updatePINNBadge(true);
     } catch (error) {
+        applyOfflinePINNEstimates();
         updatePINNBadge(false);
         console.warn("PINN API unavailable:", error);
     }
@@ -310,6 +315,27 @@ function applyPINNResults(results) {
         block.pinn_confidence = Number(result.confidence ?? 0.5);
         block.pinn_ood_warning = Boolean(result.ood_warning);
         block.pinn_ood_features = Array.isArray(result.ood_features) ? result.ood_features : [];
+    });
+    refreshPINNLayers();
+}
+
+function applyOfflinePINNEstimates() {
+    blocks.forEach((block) => {
+        const heatBase = Number(block.uhi_intensity || 0);
+        const heightEffect = (Number(block.max_height_m || 0) - 20) * 0.022;
+        const greenEffect = (Number(block.green_cover || 0) - 15) * -0.018;
+        const albedoEffect = (Number(block.albedo || 0.24) - 0.24) * -2.4;
+        const ventilationRelief = Number(block.ventilation_score || 0.5) * -0.55;
+        const delta = heatBase * 0.42 + heightEffect + greenEffect + albedoEffect + ventilationRelief;
+
+        block.pinn_delta_temp_c = Number(delta.toFixed(2));
+        block.pinn_surface_temp_c = Number((Number(block.surface_temp_c || 36) + delta * 0.38).toFixed(1));
+        block.pinn_wind_factor = Number(Math.max(0.05, Math.min(1, block.ventilation_score || 0.5)).toFixed(2));
+        block.pinn_height_sensitivity = Number((0.12 + Number(block.hw_ratio || 1) * 0.035).toFixed(2));
+        block.pinn_green_sensitivity = Number((-0.08 - Math.max(0, 25 - Number(block.green_cover || 0)) * 0.004).toFixed(2));
+        block.pinn_confidence = Number(Math.max(0.45, Math.min(0.82, 0.72 - Math.abs(delta) * 0.025)).toFixed(2));
+        block.pinn_ood_warning = Math.abs(delta) > 4.5 || Number(block.green_cover || 0) < 5;
+        block.pinn_ood_features = block.pinn_ood_warning ? ["height", "green_cover", "thermal_load"] : [];
     });
     refreshPINNLayers();
 }
@@ -912,7 +938,7 @@ function setupEditorControls() {
     document.getElementById("btn-apply-3d-edits")?.addEventListener("click", apply3DEdits);
 }
 
-function apply3DEdits() {
+async function apply3DEdits() {
     const blockId = document.getElementById("edit-block-select")?.value;
     if (!blockId) return;
     const block = blocks.find((item) => item.id === blockId);
@@ -926,19 +952,135 @@ function apply3DEdits() {
     const greenDelta = newGreen - Number(block.green_cover);
     const albedoDelta = newAlbedo - Number(block.albedo);
     const uhiShift = heightDelta * 0.028 - greenDelta * 0.018 - albedoDelta * 1.9;
+    const environment = estimateEnvironmentReferences(block);
 
     block.max_height_m = newHeight;
     block.green_cover = newGreen;
     block.albedo = Number(newAlbedo.toFixed(2));
     block.uhi_intensity = Math.max(0, Number((block.uhi_intensity + uhiShift).toFixed(2)));
-    block.surface_temp_c = Number(((block.surface_temp_c || 36) + uhiShift * 0.85).toFixed(1));
-    block.air_temp_c = Number(((block.air_temp_c || 33) + uhiShift * 0.45).toFixed(1));
-    block.heat_storage_wm2 = Math.max(80, Number(((block.heat_storage_wm2 || 160) + heightDelta * 2.8 - greenDelta * 0.9).toFixed(0)));
+    recomputeEditedBlockMetrics(block, environment);
 
     selectedBlockId = block.id;
     saveBlocksToSharedState();
     rebuildBlockScene();
-    loadCFDMicroclimate();
+    await loadCFDMicroclimate();
+    refreshSelectedBlockDetails();
+}
+
+function estimateEnvironmentReferences(block) {
+    const altitudeRad = Math.PI * 57 / 180;
+    const previousShadow = clamp01(Number(block.shadow_coverage_pct || 20) / 100);
+    const previousAbsorbed = clamp(1 - Number(block.albedo || 0.24) - Number(block.green_cover || 0) / 260, 0.18, 0.92);
+    const currentSolar = Number(block.solar_radiation_wm2 || 0);
+    const solarDenominator = Math.max(0.1, (1 - previousShadow * 0.45) * previousAbsorbed);
+    const clearSkyRadiation = currentSolar > 0
+        ? currentSolar / solarDenominator
+        : 940 * Math.sin(altitudeRad);
+    const ventilation = Math.max(0.08, Number(block.ventilation_score || 0.5));
+    const inletWindSpeed = Math.max(0.1, Number(block.wind_speed || 3) / ventilation);
+    const ruralReference = Number(block.thermal_uhi_intensity_c)
+        ? Number(block.air_temp_c || 34) - Number(block.thermal_uhi_intensity_c)
+        : Math.max(28, Number(block.air_temp_c || 34) - Number(block.uhi_intensity || 2));
+
+    return {
+        clearSkyRadiation,
+        inletWindSpeed,
+        ruralReference,
+        baseAirTemp: Number(block.air_temp_c || 34),
+        surfaceReference: Number(block.surface_temp_c || 38),
+    };
+}
+
+function recomputeEditedBlockMetrics(block, environment) {
+    const height = Number(block.max_height_m || 0);
+    const svf = Number(block.svf || 0.5);
+    const planArea = Number(block.lambda_p || 0.35);
+    const hwRatio = Number(block.hw_ratio || 1.4);
+    const albedo = Number(block.albedo || 0.24);
+    const greenCover = Number(block.green_cover || 0);
+    const sunAltitudeRad = Math.PI * 57 / 180;
+
+    const canyonDrag = clamp(1 - 0.14 * hwRatio - 0.30 * planArea, 0.18, 0.95);
+    const skyAcceleration = 0.55 + 0.65 * svf;
+    const corridorBonus = block.zone_class === "WIND_CORRIDOR_CRITICAL" ? 1.18 : 1;
+    const avgWindSpeed = environment.inletWindSpeed * canyonDrag * skyAcceleration * corridorBonus;
+    const windDeflection = clamp(
+        hwRatio * 9.5 + planArea * 24 - svf * 8 + (block.zone_class === "WIND_CORRIDOR_CRITICAL" && height > 18 ? Math.min(18, (height - 18) * 0.8) : 0),
+        0,
+        70,
+    );
+    const ventilationScore = clamp(avgWindSpeed / Math.max(environment.inletWindSpeed, 0.1), 0, 1);
+
+    const shadowLength = height / Math.tan(Math.max(sunAltitudeRad, 0.08));
+    const shadowCoverage = clamp((shadowLength / 42) * (0.55 + planArea), 0, 0.92);
+    const solarAccess = clamp(8.2 * svf * (1 - shadowCoverage * 0.55), 0.4, 8.5);
+    const absorbedFraction = clamp(1 - albedo - greenCover / 260, 0.18, 0.92);
+    const solarRadiation = environment.clearSkyRadiation * (1 - shadowCoverage * 0.45) * absorbedFraction;
+
+    const heatBurden = computeHeatBurden(avgWindSpeed, solarRadiation, greenCover, albedo);
+    const solarHeating = solarRadiation / 145;
+    const ventilationCooling = Math.min(3.2, avgWindSpeed * 0.55);
+    const shadeCooling = shadowCoverage * 100 * 0.025;
+    const greenCooling = greenCover * 0.035;
+    const albedoCooling = albedo * 3.6;
+    const canyonStorage = Math.max(0, hwRatio - 1) * 0.55;
+    const surfaceTemp = environment.baseAirTemp
+        + solarHeating
+        + canyonStorage
+        - ventilationCooling
+        - shadeCooling
+        - greenCooling
+        - albedoCooling
+        + heatBurden * 2.4;
+    const airTemp = surfaceTemp - 3.8 + heatBurden * 1.2;
+    const thermalUhi = airTemp - environment.ruralReference;
+    const heatStorage = Math.max(0, solarRadiation * (0.22 + heatBurden * 0.28) * (1 - albedo * 0.45));
+
+    block.wind_speed = Number(avgWindSpeed.toFixed(1));
+    block.corridor_bearing = Number((85 + windDeflection).toFixed(1));
+    block.wind_deflection_deg = Number(windDeflection.toFixed(1));
+    block.pressure_drop_pa = Number(Math.max(0, 0.5 * 1.225 * (environment.inletWindSpeed ** 2 - avgWindSpeed ** 2)).toFixed(2));
+    block.ventilation_score = Number(ventilationScore.toFixed(2));
+    block.shadow_length_m = Number(shadowLength.toFixed(2));
+    block.shadow_coverage_pct = Number((shadowCoverage * 100).toFixed(0));
+    block.solar_access_hours = Number(solarAccess.toFixed(1));
+    block.solar_radiation_wm2 = Number(solarRadiation.toFixed(0));
+    block.heat_burden_score = Number(heatBurden.toFixed(2));
+    block.surface_temp_c = Number(surfaceTemp.toFixed(1));
+    block.air_temp_c = Number(airTemp.toFixed(1));
+    block.thermal_uhi_intensity_c = Number(Math.max(0, thermalUhi).toFixed(2));
+    block.heat_storage_wm2 = Number(heatStorage.toFixed(0));
+    block.thermal_risk = classifyThermalRisk(surfaceTemp);
+    block.combined_risk = classifyMicroclimateRisk(heatBurden);
+}
+
+function computeHeatBurden(windSpeed, solarRadiation, greenCover, albedo) {
+    const solarLoad = clamp(solarRadiation / 760, 0, 1);
+    const stagnantAir = clamp(1 - windSpeed / 4.5, 0, 1);
+    const greenRelief = clamp(greenCover / 100, 0, 0.6);
+    const albedoRelief = clamp(albedo, 0, 0.75) * 0.35;
+    return clamp(solarLoad * 0.55 + stagnantAir * 0.45 - greenRelief * 0.25 - albedoRelief, 0, 1);
+}
+
+function classifyThermalRisk(surfaceTemp) {
+    if (surfaceTemp >= 41) return "extreme";
+    if (surfaceTemp >= 38) return "high";
+    if (surfaceTemp >= 35) return "moderate";
+    return "low";
+}
+
+function classifyMicroclimateRisk(heatBurden) {
+    if (heatBurden >= 0.72) return "high";
+    if (heatBurden >= 0.42) return "moderate";
+    return "low";
+}
+
+function clamp(value, min, max) {
+    return Math.min(Math.max(Number(value), min), max);
+}
+
+function clamp01(value) {
+    return clamp(value, 0, 1);
 }
 
 function createBlockHitArea(group, block) {
@@ -1840,6 +1982,13 @@ function selectBlock(block, mesh) {
 
 function selectBlockById(blockId) {
     const mesh = blockMeshes.find((item) => item.userData.block?.id === blockId);
+    if (!mesh) return;
+    selectBlock(mesh.userData.block, mesh);
+}
+
+function refreshSelectedBlockDetails() {
+    if (!selectedBlockId) return;
+    const mesh = blockMeshes.find((item) => item.userData.block?.id === selectedBlockId);
     if (!mesh) return;
     selectBlock(mesh.userData.block, mesh);
 }
