@@ -1,0 +1,806 @@
+{
+  "generated_at": "2026-06-08T17:20:45.815143",
+  "datasets": {
+    "building_footprints": {
+      "description": "NYC Building Footprints",
+      "source": "NYC Open Data (pre-downloaded)",
+      "filename": "BUILDING_20260602.geojson",
+      "format": "geojson",
+      "auth_required": false,
+      "file_size_bytes": 1008504854,
+      "file_size": "961.8 MB",
+      "status": "OK",
+      "errors": [],
+      "row_count": 1082945,
+      "crs": "EPSG:4326",
+      "schema": {
+        "geometry": "MultiPolygon",
+        "properties": [
+          ":id",
+          ":version",
+          ":created_at",
+          ":updated_at",
+          "name",
+          "bin",
+          "doitt_id",
+          "shape_area",
+          "base_bbl",
+          "objectid",
+          "construction_year",
+          "feature_code",
+          "geom_source",
+          "ground_elevation",
+          "height_roof",
+          "last_edited_date",
+          "last_status_type",
+          "mappluto_bbl",
+          "shape_length"
+        ]
+      },
+      "bounds": [
+        -74.255496924591,
+        40.498437523627,
+        -73.700063823166,
+        40.915058408069
+      ],
+      "driver": "GeoJSON",
+      "missing_values_sample": {
+        "name": {
+          "count": 998,
+          "pct": 99.8
+        },
+        "construction_year": {
+          "count": 5,
+          "pct": 0.5
+        },
+        "ground_elevation": {
+          "count": 3,
+          "pct": 0.3
+        },
+        "last_status_type": {
+          "count": 1,
+          "pct": 0.1
+        }
+      },
+      "columns": [
+        ":id",
+        ":version",
+        ":created_at",
+        ":updated_at",
+        "name",
+        "bin",
+        "doitt_id",
+        "shape_area",
+        "base_bbl",
+        "objectid",
+        "construction_year",
+        "feature_code",
+        "geom_source",
+        "ground_elevation",
+        "height_roof",
+        "last_edited_date",
+        "last_status_type",
+        "mappluto_bbl",
+        "shape_length",
+        "geometry"
+      ],
+      "sample_crs": "EPSG:4326"
+    },
+    "mappluto": {
+      "description": "MapPLUTO \u2013 Shoreline Clipped (All Boroughs)",
+      "source": "NYC Open Data \u2013 Socrata API",
+      "filename": "mappluto.csv",
+      "format": "csv",
+      "auth_required": false,
+      "file_size_bytes": 281148395,
+      "file_size": "268.1 MB",
+      "status": "OK",
+      "errors": [],
+      "row_count": 721973,
+      "columns": [
+        "borough",
+        "Tax block",
+        "Tax lot",
+        "community board",
+        "census tract 2010",
+        "cb2010",
+        "schooldist",
+        "council district",
+        "postcode",
+        "firecomp",
+        "policeprct",
+        "healtharea",
+        "sanitboro",
+        "sanitsub",
+        "address",
+        "zonedist1",
+        "zonedist2",
+        "zonedist3",
+        "zonedist4",
+        "overlay1",
+        "overlay2",
+        "spdist1",
+        "spdist2",
+        "spdist3",
+        "ltdheight",
+        "splitzone",
+        "bldgclass",
+        "landuse",
+        "easements",
+        "ownertype",
+        "ownername",
+        "lotarea",
+        "bldgarea",
+        "comarea",
+        "resarea",
+        "officearea",
+        "retailarea",
+        "garagearea",
+        "strgearea",
+        "factryarea",
+        "otherarea",
+        "areasource",
+        "numbldgs",
+        "numfloors",
+        "unitsres",
+        "unitstotal",
+        "lotfront",
+        "lotdepth",
+        "bldgfront",
+        "bldgdepth",
+        "ext",
+        "proxcode",
+        "irrlotcode",
+        "lottype",
+        "bsmtcode",
+        "assessland",
+        "assesstot",
+        "exempttot",
+        "yearbuilt",
+        "yearalter1",
+        "yearalter2",
+        "histdist",
+        "landmark",
+        "builtfar",
+        "residfar",
+        "commfar",
+        "facilfar",
+        "affresfar",
+        "mnffar",
+        "borocode",
+        "BBL",
+        "condono",
+        "tract2010",
+        "xcoord",
+        "ycoord",
+        "latitude",
+        "longitude",
+        "zonemap",
+        "zmcode",
+        "sanborn",
+        "taxmap",
+        "edesignum",
+        "appbbl",
+        "appdate",
+        "plutomapid",
+        "version",
+        "sanitdistrict",
+        "healthcenterdistrict",
+        "firm07_flag",
+        "pfirm15_flag",
+        "dcpedited",
+        "notes",
+        "bct2020",
+        "bctcb2020",
+        "mihopt1",
+        "mihopt2",
+        "mihopt3",
+        "mihopt4",
+        "transitzone",
+        "geom",
+        "basempdate",
+        "dcasdate",
+        "edesigdate",
+        "landmkdate",
+        "masdate",
+        "polidate",
+        "rpaddate",
+        "zoningdate"
+      ],
+      "column_count": 108,
+      "dtypes": {
+        "borough": "str",
+        "Tax block": "int64",
+        "Tax lot": "int64",
+        "community board": "int64",
+        "census tract 2010": "float64",
+        "cb2010": "int64",
+        "schooldist": "int64",
+        "council district": "int64",
+        "postcode": "int64",
+        "firecomp": "str",
+        "policeprct": "int64",
+        "healtharea": "int64",
+        "sanitboro": "int64",
+        "sanitsub": "str",
+        "address": "str",
+        "zonedist1": "str",
+        "zonedist2": "str",
+        "zonedist3": "float64",
+        "zonedist4": "float64",
+        "overlay1": "str",
+        "overlay2": "str",
+        "spdist1": "str",
+        "spdist2": "str",
+        "spdist3": "float64",
+        "ltdheight": "float64",
+        "splitzone": "bool",
+        "bldgclass": "str",
+        "landuse": "float64",
+        "easements": "int64",
+        "ownertype": "str",
+        "ownername": "str",
+        "lotarea": "int64",
+        "bldgarea": "int64",
+        "comarea": "float64",
+        "resarea": "float64",
+        "officearea": "float64",
+        "retailarea": "float64",
+        "garagearea": "float64",
+        "strgearea": "float64",
+        "factryarea": "float64",
+        "otherarea": "float64",
+        "areasource": "int64",
+        "numbldgs": "int64",
+        "numfloors": "float64",
+        "unitsres": "int64",
+        "unitstotal": "int64",
+        "lotfront": "float64",
+        "lotdepth": "float64",
+        "bldgfront": "float64",
+        "bldgdepth": "float64",
+        "ext": "str",
+        "proxcode": "int64",
+        "irrlotcode": "bool",
+        "lottype": "int64",
+        "bsmtcode": "int64",
+        "assessland": "int64",
+        "assesstot": "int64",
+        "exempttot": "int64",
+        "yearbuilt": "int64",
+        "yearalter1": "int64",
+        "yearalter2": "int64",
+        "histdist": "str",
+        "landmark": "float64",
+        "builtfar": "float64",
+        "residfar": "float64",
+        "commfar": "float64",
+        "facilfar": "float64",
+        "affresfar": "float64",
+        "mnffar": "int64",
+        "borocode": "int64",
+        "BBL": "int64",
+        "condono": "float64",
+        "tract2010": "int64",
+        "xcoord": "int64",
+        "ycoord": "int64",
+        "latitude": "float64",
+        "longitude": "float64",
+        "zonemap": "str",
+        "zmcode": "object",
+        "sanborn": "str",
+        "taxmap": "int64",
+        "edesignum": "str",
+        "appbbl": "float64",
+        "appdate": "str",
+        "plutomapid": "int64",
+        "version": "str",
+        "sanitdistrict": "int64",
+        "healthcenterdistrict": "int64",
+        "firm07_flag": "float64",
+        "pfirm15_flag": "float64",
+        "dcpedited": "str",
+        "notes": "float64",
+        "bct2020": "int64",
+        "bctcb2020": "int64",
+        "mihopt1": "object",
+        "mihopt2": "object",
+        "mihopt3": "object",
+        "mihopt4": "float64",
+        "transitzone": "str",
+        "geom": "float64",
+        "basempdate": "float64",
+        "dcasdate": "float64",
+        "edesigdate": "float64",
+        "landmkdate": "float64",
+        "masdate": "float64",
+        "polidate": "float64",
+        "rpaddate": "float64",
+        "zoningdate": "float64"
+      },
+      "missing_values_sample": {
+        "zonedist2": {
+          "count": 4922,
+          "pct": 98.44
+        },
+        "zonedist3": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "zonedist4": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "overlay1": {
+          "count": 4605,
+          "pct": 92.1
+        },
+        "overlay2": {
+          "count": 4999,
+          "pct": 99.98
+        },
+        "spdist1": {
+          "count": 4812,
+          "pct": 96.24
+        },
+        "spdist2": {
+          "count": 4999,
+          "pct": 99.98
+        },
+        "spdist3": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "ltdheight": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "landuse": {
+          "count": 9,
+          "pct": 0.18
+        },
+        "ownertype": {
+          "count": 4826,
+          "pct": 96.52
+        },
+        "comarea": {
+          "count": 115,
+          "pct": 2.3
+        },
+        "resarea": {
+          "count": 115,
+          "pct": 2.3
+        },
+        "officearea": {
+          "count": 115,
+          "pct": 2.3
+        },
+        "retailarea": {
+          "count": 115,
+          "pct": 2.3
+        },
+        "garagearea": {
+          "count": 115,
+          "pct": 2.3
+        },
+        "strgearea": {
+          "count": 115,
+          "pct": 2.3
+        },
+        "factryarea": {
+          "count": 115,
+          "pct": 2.3
+        },
+        "otherarea": {
+          "count": 115,
+          "pct": 2.3
+        },
+        "numfloors": {
+          "count": 95,
+          "pct": 1.9
+        },
+        "ext": {
+          "count": 174,
+          "pct": 3.48
+        },
+        "histdist": {
+          "count": 4996,
+          "pct": 99.92
+        },
+        "landmark": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "condono": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "zmcode": {
+          "count": 4918,
+          "pct": 98.36
+        },
+        "edesignum": {
+          "count": 4867,
+          "pct": 97.34
+        },
+        "appbbl": {
+          "count": 4656,
+          "pct": 93.12
+        },
+        "appdate": {
+          "count": 4656,
+          "pct": 93.12
+        },
+        "firm07_flag": {
+          "count": 4932,
+          "pct": 98.64
+        },
+        "pfirm15_flag": {
+          "count": 4930,
+          "pct": 98.6
+        },
+        "dcpedited": {
+          "count": 4998,
+          "pct": 99.96
+        },
+        "notes": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "mihopt1": {
+          "count": 4871,
+          "pct": 97.42
+        },
+        "mihopt2": {
+          "count": 4961,
+          "pct": 99.22
+        },
+        "mihopt3": {
+          "count": 4883,
+          "pct": 97.66
+        },
+        "mihopt4": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "geom": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "basempdate": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "dcasdate": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "edesigdate": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "landmkdate": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "masdate": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "polidate": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "rpaddate": {
+          "count": 5000,
+          "pct": 100.0
+        },
+        "zoningdate": {
+          "count": 5000,
+          "pct": 100.0
+        }
+      },
+      "coordinate_columns": [
+        "xcoord",
+        "ycoord",
+        "latitude",
+        "longitude"
+      ],
+      "crs": "EPSG:4326 (inferred from lat/lon columns)",
+      "date_columns": [
+        "yearbuilt",
+        "yearalter1",
+        "yearalter2",
+        "appdate",
+        "basempdate",
+        "dcasdate",
+        "edesigdate",
+        "landmkdate",
+        "masdate",
+        "polidate",
+        "rpaddate",
+        "zoningdate"
+      ],
+      "year_range_yearbuilt": {
+        "min": 1887,
+        "max": 2025
+      },
+      "year_range_yearalter1": {
+        "min": 1926,
+        "max": 2026
+      },
+      "year_range_yearalter2": {
+        "min": 1984,
+        "max": 2025
+      },
+      "date_range_appdate": {
+        "min": "1985-04-16 00:00:00",
+        "max": "2026-03-27 00:00:00"
+      }
+    },
+    "tree_census": {
+      "description": "2015 Street Tree Census \u2013 Tree Data",
+      "source": "NYC Open Data \u2013 Socrata API",
+      "filename": "tree_census_2015.csv",
+      "format": "csv",
+      "auth_required": false,
+      "file_size_bytes": 220354362,
+      "file_size": "210.1 MB",
+      "status": "OK",
+      "errors": [],
+      "row_count": 683788,
+      "columns": [
+        "tree_id",
+        "block_id",
+        "created_at",
+        "tree_dbh",
+        "stump_diam",
+        "curb_loc",
+        "status",
+        "health",
+        "spc_latin",
+        "spc_common",
+        "steward",
+        "guards",
+        "sidewalk",
+        "user_type",
+        "problems",
+        "root_stone",
+        "root_grate",
+        "root_other",
+        "trunk_wire",
+        "trnk_light",
+        "trnk_other",
+        "brch_light",
+        "brch_shoe",
+        "brch_other",
+        "address",
+        "postcode",
+        "zip_city",
+        "community board",
+        "borocode",
+        "borough",
+        "cncldist",
+        "st_assem",
+        "st_senate",
+        "nta",
+        "nta_name",
+        "boro_ct",
+        "state",
+        "latitude",
+        "longitude",
+        "x_sp",
+        "y_sp",
+        "council district",
+        "census tract",
+        "bin",
+        "bbl"
+      ],
+      "column_count": 45,
+      "dtypes": {
+        "tree_id": "int64",
+        "block_id": "int64",
+        "created_at": "str",
+        "tree_dbh": "int64",
+        "stump_diam": "int64",
+        "curb_loc": "str",
+        "status": "str",
+        "health": "str",
+        "spc_latin": "str",
+        "spc_common": "str",
+        "steward": "str",
+        "guards": "str",
+        "sidewalk": "str",
+        "user_type": "str",
+        "problems": "str",
+        "root_stone": "str",
+        "root_grate": "str",
+        "root_other": "str",
+        "trunk_wire": "str",
+        "trnk_light": "str",
+        "trnk_other": "str",
+        "brch_light": "str",
+        "brch_shoe": "str",
+        "brch_other": "str",
+        "address": "str",
+        "postcode": "int64",
+        "zip_city": "str",
+        "community board": "int64",
+        "borocode": "int64",
+        "borough": "str",
+        "cncldist": "int64",
+        "st_assem": "int64",
+        "st_senate": "int64",
+        "nta": "str",
+        "nta_name": "str",
+        "boro_ct": "int64",
+        "state": "str",
+        "latitude": "float64",
+        "longitude": "float64",
+        "x_sp": "float64",
+        "y_sp": "float64",
+        "council district": "float64",
+        "census tract": "float64",
+        "bin": "float64",
+        "bbl": "float64"
+      },
+      "missing_values_sample": {
+        "health": {
+          "count": 206,
+          "pct": 4.12
+        },
+        "spc_latin": {
+          "count": 206,
+          "pct": 4.12
+        },
+        "spc_common": {
+          "count": 206,
+          "pct": 4.12
+        },
+        "steward": {
+          "count": 3328,
+          "pct": 66.56
+        },
+        "guards": {
+          "count": 4088,
+          "pct": 81.76
+        },
+        "sidewalk": {
+          "count": 206,
+          "pct": 4.12
+        },
+        "problems": {
+          "count": 2888,
+          "pct": 57.76
+        },
+        "council district": {
+          "count": 46,
+          "pct": 0.92
+        },
+        "census tract": {
+          "count": 46,
+          "pct": 0.92
+        },
+        "bin": {
+          "count": 66,
+          "pct": 1.32
+        },
+        "bbl": {
+          "count": 66,
+          "pct": 1.32
+        }
+      },
+      "coordinate_columns": [
+        "latitude",
+        "longitude"
+      ],
+      "crs": "EPSG:4326 (inferred from lat/lon columns)",
+      "date_columns": [
+        "created_at"
+      ],
+      "date_range_created_at": {
+        "min": "2015-05-19 00:00:00",
+        "max": "2015-09-17 00:00:00"
+      }
+    },
+    "landsat8": {
+      "description": "Landsat 8 Collection 2 Level 2 (Surface Reflectance)",
+      "source": "Google Earth Engine \u2013 LANDSAT/LC08/C02/T1_L2",
+      "filename": "landsat8_nyc.tif",
+      "format": "geotiff",
+      "auth_required": true,
+      "file_size_bytes": 18962102,
+      "file_size": "18.1 MB",
+      "status": "OK",
+      "errors": [],
+      "crs": "EPSG:4326",
+      "bounds": [
+        -74.25923296174025,
+        40.4770087240847,
+        -73.70030119196109,
+        40.91844085470103
+      ],
+      "resolution": [
+        0.0005389891704717129,
+        0.0005389891704717129
+      ],
+      "shape": [
+        819,
+        1037
+      ],
+      "band_count": 5,
+      "dtypes": [
+        "float64",
+        "float64",
+        "float64",
+        "float64",
+        "float64"
+      ]
+    },
+    "sentinel2": {
+      "description": "Sentinel-2 SR Harmonized",
+      "source": "Google Earth Engine \u2013 COPERNICUS/S2_SR_HARMONIZED",
+      "filename": "sentinel2_nyc.tif",
+      "format": "geotiff",
+      "auth_required": true,
+      "file_size_bytes": 17428903,
+      "file_size": "16.6 MB",
+      "status": "OK",
+      "errors": [],
+      "crs": "EPSG:4326",
+      "bounds": [
+        -74.25941262479706,
+        40.47736805019834,
+        -73.70030119196107,
+        40.918261191644206
+      ],
+      "resolution": [
+        0.0003593261136478086,
+        0.0003593261136478086
+      ],
+      "shape": [
+        1227,
+        1556
+      ],
+      "band_count": 4,
+      "dtypes": [
+        "float32",
+        "float32",
+        "float32",
+        "float32"
+      ]
+    },
+    "era5": {
+      "description": "ERA5 Hourly Reanalysis (2m Temperature, 10m Wind, Surface Radiation)",
+      "source": "Copernicus Climate Data Store (CDS)",
+      "filename": "era5_nyc_hourly.nc",
+      "format": "netcdf",
+      "auth_required": true,
+      "file_size_bytes": 1421824,
+      "file_size": "1.4 MB",
+      "status": "OK",
+      "errors": [],
+      "variables": [
+        "t2m",
+        "d2m",
+        "u10",
+        "v10",
+        "sp",
+        "number",
+        "valid_time",
+        "latitude",
+        "longitude",
+        "expver",
+        "tp",
+        "ssrd",
+        "strd"
+      ],
+      "dimensions": {
+        "valid_time": 8784,
+        "latitude": 2,
+        "longitude": 3
+      },
+      "crs": "EPSG:4326 (ERA5 standard)"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# NYC Micro-Climate Zoning AI — Development & Testing Dependencies
+# ═══════════════════════════════════════════════════════════════════════════
+#   pip install -r requirements-dev.txt
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── Testing ──────────────────────────────────────────────────────────────
+pytest>=7.4.0               # Test runner
+pytest-cov>=4.1.0           # Coverage reporting
+
+# ── Code Quality ─────────────────────────────────────────────────────────
+ruff>=0.4.0                 # Linter + formatter (replaces flake8/black/isort)
+
+# ── Notebooks (optional) ────────────────────────────────────────────────
+jupyter>=1.0.0              # Interactive exploration of datasets
+matplotlib>=3.7.0           # Plotting (raster previews, histograms)
+folium>=0.14.0              # Interactive Leaflet maps for GeoJSON preview
+
+# ── Database (future phases) ────────────────────────────────────────────
+# sqlalchemy>=2.0.0         # ORM for PostgreSQL/PostGIS persistence
+# geoalchemy2>=0.14.0       # SQLAlchemy extension for PostGIS spatial types
+# psycopg2-binary>=2.9.0    # PostgreSQL driver

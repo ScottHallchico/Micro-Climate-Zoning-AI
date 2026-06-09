@@ -1,0 +1,14 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# NYC Micro-Climate Zoning AI — Remote Sensing & API Dependencies
+# ═══════════════════════════════════════════════════════════════════════════
+# These require external authentication (Earth Engine / Copernicus CDS).
+# Install only when you have credentials configured.
+#
+#   pip install -r requirements-remote.txt
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── Google Earth Engine (Landsat 8 & Sentinel-2) ─────────────────────────
+earthengine-api>=0.1.370    # Python client for GEE; satellite imagery export
+
+# ── Copernicus Climate Data Store (ERA5) ─────────────────────────────────
+cdsapi>=0.7.0               # CDS REST client for ERA5 reanalysis downloads
