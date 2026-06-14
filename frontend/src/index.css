@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-gray-100 font-sans antialiased selection:bg-primary/30;
+  }
+}
+
+.glass-panel {
+  @apply bg-surface/80 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl transition-all duration-300;
+}
+
+.glass-panel:hover {
+  @apply border-white/20 shadow-primary/20;
+}
+
+.input-slider {
+  @apply w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary;
+}
+
+.metric-card {
+  @apply bg-surfaceHover/50 p-6 rounded-xl border border-white/5 flex flex-col gap-2 relative overflow-hidden;
+}
+
+.metric-card::before {
+  content: '';
+  @apply absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent opacity-50;
+}
