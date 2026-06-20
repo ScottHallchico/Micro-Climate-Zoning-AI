@@ -1,7 +1,5 @@
-# Deployment Cost Analysis
+# Inference Benchmark
 
-- **Inference Time (Full Domain)**: 19.983 seconds
-- **OpenFOAM CFD Time**: ~3600 seconds
-- **Speedup Factor**: 180x
-- **Model Size**: 0.13 MB
-- **Inference Memory**: 1020.1 MB
+- **Inference Latency**: 10.32 ms per graph (Target: < 5000 ms)
+- **RAM Usage**: 934.64 MB (Target: < 2000 MB)
+- **Status**: PASS
