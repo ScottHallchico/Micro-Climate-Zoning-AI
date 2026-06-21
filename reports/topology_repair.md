@@ -8,5 +8,5 @@
 
 ## Verification
 - **Duplicate Geometries:** 0
-- **Overlap Area:** 1.3895%
+- **Overlap Area:** 2.3409%
 - **Disconnected Regions:** Preserved as individual GeoJSON features.

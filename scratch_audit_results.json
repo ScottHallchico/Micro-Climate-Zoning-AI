@@ -1,0 +1,21 @@
+{
+    "total": 1082945,
+    "geom_types": {
+        "MultiPolygon": 1082945
+    },
+    "invalid": 7,
+    "empty": 0,
+    "duplicates": 0,
+    "h_total": 1082945,
+    "h_missing": 0,
+    "h_pct_missing": 0.0,
+    "h_pct_present": 100.0,
+    "h_min": 0.0,
+    "h_max": 2026.0,
+    "h_mean": 27.78930604815682,
+    "h_median": 26.14769385,
+    "h_zero": 753,
+    "h_outliers": 268,
+    "v_avg": 8.965176440170092,
+    "v_max": 2580
+}

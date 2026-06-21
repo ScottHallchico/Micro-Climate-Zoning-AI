@@ -1,30 +1,18 @@
 version: '3.8'
-
 services:
-  backend:
-    build:
-      context: ./backend
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./backend/app:/app/app
-      - ./models:/app/models
+  surrogate-api:
+    build: .
+    ports: ["8000:8000"]
     environment:
-      - MODEL_ENV=production
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
+      - MODEL_PATH=/models/production/lightgbm_production.joblib
+  cfd-dispatcher:
+    image: alpine:latest
+    command: tail -f /dev/null
+    volumes: ["./data/cfd_cases:/data"]
   frontend:
-    build:
-      context: ./frontend
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend/src:/app/src
+    image: nginx:alpine
+    ports: ["80:80"]
+  db:
+    image: postgis/postgis
     environment:
-      - VITE_API_URL=http://localhost:8000
-    depends_on:
-      - backend
+      - POSTGRES_PASSWORD=postgres

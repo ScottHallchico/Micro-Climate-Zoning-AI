@@ -1,6 +1,8 @@
-Computed voxel-wise absolute error across the worst performing archetype holdout.
+# Error Localization
 
-- **Pressure Failures**: Localized entirely to sharp windward corners and roof leading-edges.
-- **Velocity Failures**: Localized to deep recirculation zones in the far-wake.
-
-These spatial heatmaps prove the surrogate is learning smooth laminar flows but failing on high-gradient boundary layer separations.
+| Region | Mean Absolute Error (u) |
+|---|---|
+| Global | 3.6377 |
+| Z < 10m (Street level) | nan |
+| Z > 50m (Roofs/Sky) | 3.6338 |
+| Wake Cores | 3.1786 |

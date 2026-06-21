@@ -1,0 +1,5 @@
+data/cfd_cases
+.venv
+.git
+__pycache__
+*.pyc

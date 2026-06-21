@@ -1,0 +1,19 @@
+features:
+  count: 39
+  groups:
+  - baseline_relative
+  - svf_proxies
+  - wind_exposure
+  - street_canyon
+  - multi_scale_morphology
+model:
+  hyperparameters:
+    learning_rate: 0.05
+    n_estimators: 100
+    num_leaves: 64
+  type: LightGBM
+  version: Phase8R_Final
+routing:
+  cfd_fallback: enabled
+  confidence_threshold: 0.8
+  ood_threshold: distance_to_centroid > 100

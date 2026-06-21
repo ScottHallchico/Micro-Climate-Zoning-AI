@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climate Zoning AI Workstation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=3">
+    <!-- MapLibre GL JS -->
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+
+    <!-- Deck.gl -->
+    <script src="https://unpkg.com/deck.gl@8.9.33/dist.min.js"></script>
+</head>
+
+<body>
+    <div id="map-container"></div>
+
+    <div id="ui-layer">
+        <!-- Floating Header -->
+        <header class="top-bar glass">
+            <div class="logo">
+                Micro-Climate Zoning AI
+                <select id="city-selector" class="city-dropdown">
+                    <option value="nyc">New York City (Manhattan)</option>
+                </select>
+            </div>
+            <div class="status-indicator">
+                <span class="dot active"></span>
+                Surrogate Engine (L1) Active
+            </div>
+        </header>
+
+        <!-- Floating Left Toolbar (Layers) -->
+        <div class="toolbar left-toolbar glass">
+            <div class="toolbar-title">Climate Overlays</div>
+            <label class="toggle-switch">
+                <input type="checkbox" id="layer-buildings" checked>
+                <span class="slider"></span>
+                <span class="label">Building Massing</span>
+            </label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="layer-zones" checked>
+                <span class="slider"></span>
+                <span class="label">Climate Zones</span>
+            </label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="layer-wake">
+                <span class="slider"></span>
+                <span class="label">Wake Severity (WSI)</span>
+            </label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="layer-corridors">
+                <span class="slider"></span>
+                <span class="label">Ventilation Corridors</span>
+            </label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="layer-confidence">
+                <span class="slider"></span>
+                <span class="label">Epistemic Confidence</span>
+            </label>
+        </div>
+
+        <!-- Floating Right Panel (Zone Inspector) -->
+        <div class="inspector right-panel glass hidden" id="zone-inspector">
+            <div class="panel-header">
+                <h3>Zone Inspector</h3>
+                <button class="close-btn" id="close-inspector">✕</button>
+            </div>
+            <div class="inspector-content">
+                <div class="info-row"><span class="info-label">Zone ID:</span> <span class="info-val"
+                        id="insp-id">--</span></div>
+                <div class="info-row"><span class="info-label">Zone Class:</span> <span class="info-val"
+                        id="insp-class">--</span></div>
+                <div class="info-row"><span class="info-label">WSI:</span> <span class="info-val"
+                        id="insp-wsi">--</span></div>
+                <div class="info-row"><span class="info-label">Ventilation:</span> <span class="info-val"
+                        id="insp-vent">--</span></div>
+                <div class="info-row"><span class="info-label">Confidence:</span> <span class="info-val"
+                        id="insp-conf">--</span></div>
+                <div class="info-row"><span class="info-label">Status:</span> <span class="info-val highlight"
+                        id="insp-status">Surrogate L1</span></div>
+
+                <div class="cfd-fallback hidden" id="cfd-fallback-section">
+                    <div class="warning-text">Confidence Low. OOD Risk Detected.</div>
+                    <button class="action-btn danger" id="trigger-cfd">Launch CFD Validation</button>
+                    <div class="cfd-progress hidden" id="cfd-progress">
+                        <span>L2 OpenFOAM Running...</span>
+                        <div class="progress-bar">
+                            <div class="fill animate"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Bottom Panel (Scenario Builder) -->
+        <div class="scenario-builder bottom-panel glass">
+            <div class="sb-controls">
+                <div class="control-group">
+                    <label>Wind Velocity (m/s)</label>
+                    <input type="range" id="sb-ws" min="1" max="25" value="8" step="1">
+                    <span id="sb-ws-val">8 m/s</span>
+                </div>
+                <div class="control-group">
+                    <label>Wind Azimuth</label>
+                    <input type="range" id="sb-wd" min="0" max="360" value="225" step="5">
+                    <span id="sb-wd-val">225°</span>
+                </div>
+                <div class="control-group">
+                    <label>Urban Density (FAR)</label>
+                    <input type="range" id="sb-dens" min="0.5" max="2.5" value="1.0" step="0.1">
+                    <span id="sb-dens-val">1.0x</span>
+                </div>
+                <button class="action-btn run-btn" id="run-surrogate">Run L1 Surrogate</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js?v=3"></script>
+</body>
+
+</html>
